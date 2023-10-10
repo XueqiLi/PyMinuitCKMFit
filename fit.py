@@ -110,10 +110,14 @@ class CostFunction:
         self.divList=np.asarray(divList)
     
     def __call__(self,params):
-        result=self.prediction(params)
+        result=self.Prediction(params)
         return np.sum((self.expList-result) ** 2 / (self.divList ** 2))
     
-    def prediction(self,params):
+    def SigmaAway(self,params):
+        result=self.Prediction(params)
+        return np.asarray((self.expList-result) ** 2 / (self.divList ** 2))
+    
+    def Prediction(self,params):
         return self.calResult(params)
 
 costFunction = CostFunction(observables,expValList,divValList)
@@ -137,7 +141,30 @@ stepSize = parameterRanges * stepScale
 
 ## Actual Fit
 
-def fit():
-    initParams = [np.random.uniform(low=bound[0], high=bound[1]) for bound in parameterBounds]
-    Minuit(CostFunction, initParams) 
-    return 0
+initParams = [np.random.uniform(low=bound[0], high=bound[1]) for bound in parameterBounds]
+fit = Minuit(costFunction, initParams) 
+fit.limits=parameterBounds
+fit.scan(70000)
+fit.simplex(999999999)
+fit.migrad(999999999,999999999)
+fitResult=np.asarray(fit.values)
+observableResult=observables(fitResult)
+chiSqr=costFunction(fitResult)
+sigmaAway=costFunction.SigmaAway(fitResult)
+
+# Print
+print("Fit Result")
+print(fitResult)
+print("\n")
+print("Observabls Result:")
+observableName=["s12", "s23", "s13", "m21Rm31", "mERmMu", "mMuRMTau"]
+for i in range(6):
+    print(observableName[i],": ",observableResult[i])
+print("\n")
+
+print("Sigma Away:")
+for i in range(6):
+    print(observableName[i],": ",sigmaAway[i])
+print("\n")
+
+print("total chi-sqr: ",chiSqr)
