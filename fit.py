@@ -144,11 +144,13 @@ stepSize = parameterRanges * stepScale
 initParams = [np.random.uniform(low=bound[0], high=bound[1]) for bound in parameterBounds]
 fit = Minuit(costFunction, initParams) 
 fit.limits=parameterBounds
+
+
 fit.scan(70000)
 print("scan done, current chi-sqr=",costFunction(np.asarray(fit.values)))
-fit.simplex(999999999)
+fit.simplex()
 print("simplex done, current chi-sqr=",costFunction(np.asarray(fit.values)))
-fit.migrad(999999999,999999999)
+fit.migrad(None,1000)
 fitResult=np.asarray(fit.values)
 observableResult=observables(fitResult)
 chiSqr=costFunction(fitResult)
