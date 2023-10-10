@@ -56,6 +56,7 @@ class Observables:
 
         # Check if the input matrix is Hermitian (equal to its conjugate transpose)
         if not np.allclose(hermitian_matrix, hermitian_matrix.conj().T):
+            print(hermitian_matrix)
             raise ValueError("Input matrix must be Hermitian.")
 
         # Perform eigendecomposition
@@ -141,12 +142,13 @@ stepSize = parameterRanges * stepScale
 
 ## Actual Fit
 
-initParams = [np.random.uniform(low=bound[0], high=bound[1]) for bound in parameterBounds]
+# initParams = [np.random.uniform(low=bound[0], high=bound[1]) for bound in parameterBounds]
+initParams = [(bound[1]-bound[0])/2 for bound in parameterBounds]
 fit = Minuit(costFunction, initParams) 
 fit.limits=parameterBounds
 
 
-fit.scan(70000)
+fit.scan(10000)
 print("scan done, current chi-sqr=",costFunction(np.asarray(fit.values)))
 fit.simplex()
 print("simplex done, current chi-sqr=",costFunction(np.asarray(fit.values)))
