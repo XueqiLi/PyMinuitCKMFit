@@ -148,17 +148,22 @@ fit = Minuit(costFunction, initParams)
 fit.limits=parameterBounds
 
 
-fit.scan(10000)
+fit.scan(70000)
 print("scan done, current chi-sqr=",costFunction(np.asarray(fit.values)))
 fit.simplex()
 print("simplex done, current chi-sqr=",costFunction(np.asarray(fit.values)))
-fit.migrad(None,10000)
+# fit.migrad(None,10000)
+for i in range(10):
+    fit.migrad(2000,2000)
+    print("migrad done", (i + 1) * 2000, "times, current chi-sqr:",costFunction(np.asarray(fit.values)))
 fitResult=np.asarray(fit.values)
 observableResult=observables(fitResult)
 chiSqr=costFunction(fitResult)
 sigmaAway=costFunction.SigmaAway(fitResult)
 
 # Print
+print("==========================================================")
+print("\n")
 print("Fit Result")
 print(fitResult)
 print("\n")
