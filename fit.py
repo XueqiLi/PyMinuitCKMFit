@@ -125,7 +125,7 @@ costFunction = CostFunction(observables,expValList,divValList)
 # Fit
 
 ## Bound and merge
-commonBounds = (-10,10)
+commonBounds = (-20,20)
 tBounds = [
     (-0.5,-0.4),        # tr
     (np.sqrt(3)/2, 0.95)   #ti
