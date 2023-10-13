@@ -124,7 +124,7 @@ class CostFunction:
 costFunction = CostFunction(observables,expValList,divValList)
 # Fit
 
-## Bound and merge
+## Bound and scale
 commonBounds = (-20,20)
 tBounds = [
     (-0.5,-0.4),        # tr
@@ -134,28 +134,35 @@ tBounds = [
 parameterBoundsWithoutT = [commonBounds for i in range(numberOfParams)]
 parameterBounds = parameterBoundsWithoutT + tBounds
 
-parameterRanges = np.asarray(parameterBounds)[:, 1] - np.asarray(parameterBounds)[:, 0]
-
 stepScale = 1/1000
-
+parameterRanges = np.asarray(parameterBounds)[:, 1] - np.asarray(parameterBounds)[:, 0]
 stepSize = parameterRanges * stepScale
 
 ## Actual Fit
 
-# initParams = [np.random.uniform(low=bound[0], high=bound[1]) for bound in parameterBounds]
-initParams = [(bound[1]-bound[0])/2 for bound in parameterBounds]
+# Random init points
+initParams = [np.random.uniform(low=bound[0], high=bound[1]) for bound in parameterBounds]
+
+# Use this for use middle points for the init points
+# initParams = [(bound[1]-bound[0])/2 for bound in parameterBounds]
+
 fit = Minuit(costFunction, initParams) 
 fit.limits=parameterBounds
+# fit.errors=stepSize
 
 
 fit.scan(70000)
 print("scan done, current chi-sqr=",costFunction(np.asarray(fit.values)))
+
 fit.simplex()
 print("simplex done, current chi-sqr=",costFunction(np.asarray(fit.values)))
+
 # fit.migrad(None,10000)
 for i in range(10):
     fit.migrad(2000,2000)
     print("migrad done", (i + 1) * 2000, "times, current chi-sqr:",costFunction(np.asarray(fit.values)))
+
+# recording result
 fitResult=np.asarray(fit.values)
 observableResult=observables(fitResult)
 chiSqr=costFunction(fitResult)
