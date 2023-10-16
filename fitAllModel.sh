@@ -24,7 +24,7 @@ for module_path in "$model_dir"/*.py; do
     echo "Output for $module_name:" >> "$output_file"
 
     # Run the Python script with the module name (prepended with "model.") and append the output to the file
-    python3 fit.py "model.$module_name" >> "$output_file"
+    python3 fit.py "$model_dir.$module_name" >> "$output_file"
 
     # Add a separator line for clarity
     echo -e "\n-----------------------------\n" >> "$output_file"

@@ -21,6 +21,10 @@ class Observables:
 
     # Define Function used to calculate observerable
     def GetMassDiff(self, massMatrix):
+        # Check if the input matrix is Hermitian (equal to its conjugate transpose)
+        if not np.allclose(massMatrix, massMatrix.conj().T):
+            # print(massMatrix)
+            return np.asarray([0,0])
         eigenvalues = np.linalg.eigvals(massMatrix)
         massList = np.abs(eigenvalues)
         massList.sort()
@@ -31,6 +35,9 @@ class Observables:
         return [Dm21, Dm31]
 
     def GetMass(self, massMatrix):
+        if not np.allclose(massMatrix, massMatrix.conj().T):
+            print(massMatrix)
+            return np.asarray([0,0,0])
         eigenvalues = np.linalg.eigvals(massMatrix)
         massList = np.abs(eigenvalues)
         massList.sort()
@@ -41,8 +48,12 @@ class Observables:
 
     def GetMixing(self, umatrix):
         s13 = umatrix[0, 2] * np.conjugate(umatrix[0, 2])
-        s12 = (umatrix[0, 1] * np.conjugate(umatrix[0, 1])) / (1 - s13)
-        s23 = (umatrix[1, 2] * np.conjugate(umatrix[1, 2])) / (1 - s13)
+        if s13 == 1:
+            s12=0
+            s23=0
+        else:
+            s12 = (umatrix[0, 1] * np.conjugate(umatrix[0, 1])) / (1 - s13)
+            s23 = (umatrix[1, 2] * np.conjugate(umatrix[1, 2])) / (1 - s13)
         c13 = 1 - s13
         c12 = 1 - s12
         c23 = 1 - s23
@@ -57,7 +68,7 @@ class Observables:
         # Check if the input matrix is Hermitian (equal to its conjugate transpose)
         if not np.allclose(hermitian_matrix, hermitian_matrix.conj().T):
             print(hermitian_matrix)
-            raise ValueError("Input matrix must be Hermitian.")
+            return np.asarray([[1,0,0],[0,1,0],[0,0,1]])
 
         # Perform eigendecomposition
         eigenvalues, eigenvectors = np.linalg.eigh(hermitian_matrix)
@@ -83,8 +94,8 @@ class Observables:
         Mnu = -(np.transpose(NLMatrixN) @ np.linalg.inv(NNMatrixN) @ NLMatrixN)
         MnuDagger = Mnu.conj().T
         ELMatrixNDagger = ELMatrixN.conj().T
-        Mnunu = MnuDagger @ Mnu
-        Mee = ELMatrixNDagger @ ELMatrixN
+        Mnunu = np.round(MnuDagger @ Mnu,decimals=10)
+        Mee = np.round(ELMatrixNDagger @ ELMatrixN,decimals=10)
         MeeDiagMatrix = self.DiagHermitian(Mee)
         MnunuDiagMatrix = self.DiagHermitian(Mnunu)
         NUPMNS = np.dot(np.conj(MeeDiagMatrix.T), MnunuDiagMatrix)
@@ -125,7 +136,7 @@ costFunction = CostFunction(observables,expValList,divValList)
 # Fit
 
 ## Bound and scale
-commonBounds = (-20,20)
+commonBounds = (-5,5)
 tBounds = [
     (-0.5,-0.4),        # tr
     (np.sqrt(3)/2, 0.95)   #ti
