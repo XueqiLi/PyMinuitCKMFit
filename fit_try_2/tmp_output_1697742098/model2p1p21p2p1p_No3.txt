@@ -1,0 +1,38 @@
+Output for model2p1p21p2p1p_No3:
+scan done, current chi-sqr= 24162.69972171896
+simplex done, current chi-sqr= 8269.133912940937
+migrad done 2000 times, current chi-sqr: 6042.269247312623
+migrad done 4000 times, current chi-sqr: 6042.269247312623
+migrad done 6000 times, current chi-sqr: 6042.269247312623
+migrad done 8000 times, current chi-sqr: 6042.269247312623
+migrad done 10000 times, current chi-sqr: 6042.269247312623
+migrad done 12000 times, current chi-sqr: 6042.269247312623
+migrad done 14000 times, current chi-sqr: 6042.269247312623
+migrad done 16000 times, current chi-sqr: 6042.269247312623
+migrad done 18000 times, current chi-sqr: 6042.269247312623
+migrad done 20000 times, current chi-sqr: 6042.269247312623
+==========================================================
+Fit Result:
+[ 0.67351127  7.49918942  0.96304075  9.71959699 -0.40000001  0.95      ]
+----------------------------------------------------------
+Sigma Away:
+s12 :  3483.909595696668
+s23 :  1009.827160493827
+s13 :  1547.5794005102046
+m21Rm31 :  1.6275424407121056e-05
+mERmMu :  0.9530698814358237
+mMuRMTau :  4.4550633391676905e-06
+----------------------------------------------------------
+total chi-sqr:  6042.269247312623
+===============----------------------------===============
+Observabls Result:
+s12 :  0.952271176843156
+s23 :  0.0
+s13 :  0.0
+m21Rm31 :  0.029563388796167028
+mERmMu :  0.004604749403951145
+mMuRMTau :  0.05900422140419252
+==========================================================
+-e 
+-----------------------------
+

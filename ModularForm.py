@@ -3,7 +3,7 @@ import mpmath
 
 # Define All needed moduler form
 
-jtheta = np.vectorize(mpmath.jtheta, otypes=[np.complex128])
+jtheta = np.vectorize(mpmath.jtheta, otypes=[np.clongdouble])
 
 def e1(tau):
     return jtheta(3,0,mpmath.expjpi(2 * tau))
