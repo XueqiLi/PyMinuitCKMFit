@@ -1,0 +1,6 @@
+Output for model2p12p121_No8:
+scan done, current chi-sqr= 25717.051924839965
+simplex done, current chi-sqr= 25452.665862572667
+-e 
+-----------------------------
+

@@ -114,6 +114,58 @@ class Observables:
         output=np.array([np.real(x) for x in [s12, s23, s13, m21Rm31, mERmMu, mMuRMTau]], dtype=float)
         return output
     
+
+    def CalObservablesPrint(self, params):
+        ELMatrixN = np.array(self.ELMatrix(params), dtype=np.clongdouble)
+        NLMatrixN = np.array(self.NLMatrix(params), dtype=np.clongdouble)
+        NNMatrixN = np.array(self.NNMatrix(params), dtype=np.clongdouble)
+        print("MEL",ELMatrixN)
+        print("MNL",NLMatrixN)
+        print("MNN",NNMatrixN)
+
+        if scipy.linalg.det(NNMatrixN) == 0:
+            Mnu= np.array([[1,0,0],[0,1,0],[0,0,1]], dtype=np.clongdouble)
+        else:
+            NNMatrixNInverse = scipy.linalg.inv(NNMatrixN)
+            Mnu = -1 * np.dot(np.dot(np.transpose(NLMatrixN), NNMatrixNInverse), NLMatrixN)
+
+        MnuDagger = np.conjugate(np.transpose(Mnu))
+        ELMatrixNDagger = np.conjugate(np.transpose(ELMatrixN))
+        Mnunu = np.dot(MnuDagger, Mnu)
+        Mee = np.dot(ELMatrixNDagger, ELMatrixN)
+        print("Mnunu",Mnunu)
+        print("Mee",Mee)
+        
+        MeeDiagMatrix = self.DiagHermitian(Mee)
+        MnunuDiagMatrix = self.DiagHermitian(Mnunu)
+        print("Ue",MeeDiagMatrix)
+        print("Unu",MnunuDiagMatrix)
+    
+        NUPMNS = np.dot(np.conjugate(np.transpose(MeeDiagMatrix)), MnunuDiagMatrix)
+        print("UPMNS",NUPMNS)
+
+        Dm21, Dm31 = self.GetMassDiff(Mnunu)
+        me, m_mu, m_tau = self.GetMass(Mee)
+        print("DM21, DM31",[Dm21, Dm31])
+        print("Charged Lepton Mass",[me, m_mu, m_tau])
+
+        if Dm31 != 0:
+            m21Rm31 = Dm21/Dm31
+        else:
+            m21Rm31 = 1
+
+        if me == 0:
+            mERmMu = 1
+            mMuRMTau = 1
+        else:
+            mERmMu  = np.sqrt(me)/np.sqrt(m_mu)
+            mMuRMTau = np.sqrt(m_mu)/np.sqrt(m_tau)
+
+        s12, s23, s13 = self.GetMixing(NUPMNS)
+
+        output=np.array([np.real(x) for x in [s12, s23, s13, m21Rm31, mERmMu, mMuRMTau]], dtype=float)
+        return output
+    
     def __call__(self,params):
         return self.CalObservables(params)
     
@@ -188,6 +240,9 @@ def main():
 
     observables=Observables(modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams)
     costFunction = CostFunction(observables,expValList,divValList)
+
+    if observables.numberOfParams > 7:
+        return 0
 
     fit = Minuit(costFunction, costFunction.InitParams()) 
     fit.limits=costFunction.parameterBounds
