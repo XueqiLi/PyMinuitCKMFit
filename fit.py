@@ -249,37 +249,24 @@ def main():
     fit.strategy=2
 
     #Fit!
-    fit.scan(70000)
-    print("scan done, current chi-sqr=",costFunction(np.asarray(fit.values)))
+    fitResults = []
+    for i in range(50):
+        fit = Minuit(costFunction, costFunction.InitParams()) 
+        fit.limits=costFunction.parameterBounds
+        fit.strategy=2
 
-    fit.simplex()
-    print("simplex done, current chi-sqr=",costFunction(np.asarray(fit.values)))
+        fit.scan(10000)
 
-    fit.migrad(None,500)
-    fitResult1=fit.values
-    fitChi1=costFunction(fitResult1)
-    # fit.reset()
-    # fit.values=np.asarray(fitResult1)
-    fit.migrad(None,500)
-    fitResult2=np.asarray(fit.values)
-    fitChi2=costFunction(fitResult2)
-    i = 1
+        fit.simplex()
 
-    while ((fitChi1 - fitChi2) ** 2 > 0.001) and i < 500:
-        if fitChi1 < fitChi2:
-            fitResult1=fitResult1
-        else:
-            firResult1=fitResult2
-        fitChi1=costFunction(fitResult1)
-        # fit.reset()
-        # fit.values=np.asarray(fitResult1)
-        fit.migrad(None,5)
-        fitResult2=fit.values
-        fitChi2=costFunction(fitResult2)
-    print(i,"loop is done")
-    # print result
+        fit.migrad(None,500)
 
-    fitResult=np.asarray(fit.values)
+        # print result
+
+        fitResults.append(np.asarray(fit.values))
+    
+    fitResult = min(fitResults, key=lambda x: costFunction(x))
+    print(fitResult)
 
     print("==========================================================")
     costFunction.print(fitResult)

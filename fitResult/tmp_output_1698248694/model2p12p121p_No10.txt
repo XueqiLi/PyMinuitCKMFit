@@ -1,0 +1,5 @@
+Output for model2p12p121p_No10:
+E VariableMetricBuilder Initial matrix not pos.def.
+-e 
+-----------------------------
+
