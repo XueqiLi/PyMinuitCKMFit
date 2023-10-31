@@ -33,7 +33,7 @@ run_module() {
     echo "Output for $module_name:" >> "$tmp_output"
 
     # Run the Python script with the module name (prepended with "model.") and append the output to the file
-    gtimeout 10m python3 fit-shifted.py "$model_dir.$module_name" >> "$tmp_output"
+    gtimeout 10m python3 fit.py "$model_dir.$module_name" >> "$tmp_output"
 
     # Add a separator line for clarity
     echo -e "\n-----------------------------\n" >> "$tmp_output"
