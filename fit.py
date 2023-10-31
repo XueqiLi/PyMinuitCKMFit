@@ -9,12 +9,13 @@ from ModularForm import *
 from ExpData import *
 
 class Observables:
-    def __init__(self,ELMatrix,NLMatrix,NNMatrix,numberOfParams):
+    def __init__(self,ELMatrix,NLMatrix,NNMatrix,numberOfParams,shiftFunction=lambda x: x):
         self.ELMatrix = ELMatrix
         self.NLMatrix = NLMatrix
         self.NNMatrix = NNMatrix
         self.numberOfParams = numberOfParams
         self.observableName=["s12", "s23", "s13", "m21Rm31", "mERmMu", "mMuRMTau"]
+        self.shiftFunction = shiftFunction
 
     # Define Function used to calculate observerable
     def GetMassDiff(self, massMatrix):
@@ -114,63 +115,11 @@ class Observables:
         output=np.array([np.real(x) for x in [s12, s23, s13, m21Rm31, mERmMu, mMuRMTau]], dtype=float)
         return output
     
-
-    def CalObservablesPrint(self, params):
-        ELMatrixN = np.array(self.ELMatrix(params), dtype=np.clongdouble)
-        NLMatrixN = np.array(self.NLMatrix(params), dtype=np.clongdouble)
-        NNMatrixN = np.array(self.NNMatrix(params), dtype=np.clongdouble)
-        print("MEL",ELMatrixN)
-        print("MNL",NLMatrixN)
-        print("MNN",NNMatrixN)
-
-        if scipy.linalg.det(NNMatrixN) == 0:
-            Mnu= np.array([[1,0,0],[0,1,0],[0,0,1]], dtype=np.clongdouble)
-        else:
-            NNMatrixNInverse = scipy.linalg.inv(NNMatrixN)
-            Mnu = -1 * np.dot(np.dot(np.transpose(NLMatrixN), NNMatrixNInverse), NLMatrixN)
-
-        MnuDagger = np.conjugate(np.transpose(Mnu))
-        ELMatrixNDagger = np.conjugate(np.transpose(ELMatrixN))
-        Mnunu = np.dot(MnuDagger, Mnu)
-        Mee = np.dot(ELMatrixNDagger, ELMatrixN)
-        print("Mnunu",Mnunu)
-        print("Mee",Mee)
-        
-        MeeDiagMatrix = self.DiagHermitian(Mee)
-        MnunuDiagMatrix = self.DiagHermitian(Mnunu)
-        print("Ue",MeeDiagMatrix)
-        print("Unu",MnunuDiagMatrix)
-    
-        NUPMNS = np.dot(np.conjugate(np.transpose(MeeDiagMatrix)), MnunuDiagMatrix)
-        print("UPMNS",NUPMNS)
-
-        Dm21, Dm31 = self.GetMassDiff(Mnunu)
-        me, m_mu, m_tau = self.GetMass(Mee)
-        print("DM21, DM31",[Dm21, Dm31])
-        print("Charged Lepton Mass",[me, m_mu, m_tau])
-
-        if Dm31 != 0:
-            m21Rm31 = Dm21/Dm31
-        else:
-            m21Rm31 = 1
-
-        if me == 0:
-            mERmMu = 1
-            mMuRMTau = 1
-        else:
-            mERmMu  = np.sqrt(me)/np.sqrt(m_mu)
-            mMuRMTau = np.sqrt(m_mu)/np.sqrt(m_tau)
-
-        s12, s23, s13 = self.GetMixing(NUPMNS)
-
-        output=np.array([np.real(x) for x in [s12, s23, s13, m21Rm31, mERmMu, mMuRMTau]], dtype=float)
-        return output
-    
     def __call__(self,params):
-        return self.CalObservables(params)
+        return self.CalObservables(self.shiftFunction(params))
     
     def print(self,params):
-        observableResult = self.CalObservables(params)
+        observableResult = self.CalObservables(self.shiftFunction(params))
         print("Observabls Result:")
         for i in range(6):
             print(self.observableName[i],": ",observableResult[i])
@@ -231,6 +180,13 @@ class CostFunction:
 
         print("total chi-sqr: ",chiSqr)
 
+def ShiftFunction(params):
+    minScale = 0.08
+    commonParams = params[:-2]
+    tParams = params[-2:]
+    commonParams = [param + np.sign(param) * minScale for param in commonParams]
+    return np.concatenate((commonParams, tParams))
+
 def main():
     # Import Model from agrument of file
     # from model import *
@@ -238,36 +194,48 @@ def main():
     modelModule = importlib.import_module(modelName)
     # globals().update(vars(modelModule))
 
-    observables=Observables(modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams)
+    observables=Observables(modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams,shiftFunction=ShiftFunction)
     costFunction = CostFunction(observables,expValList,divValList)
-
-    if observables.numberOfParams > 7:
-        return 0
 
     fit = Minuit(costFunction, costFunction.InitParams()) 
     fit.limits=costFunction.parameterBounds
     fit.strategy=2
 
     #Fit!
-    fitResults = []
-    for i in range(50):
-        fit = Minuit(costFunction, costFunction.InitParams()) 
-        fit.limits=costFunction.parameterBounds
-        fit.strategy=2
+    fit.scan(70000)
+    print("scan done, current chi-sqr=",costFunction(np.asarray(fit.values)))
 
-        fit.scan(10000)
+    fit.simplex()
+    print("simplex done, current chi-sqr=",costFunction(np.asarray(fit.values)))
 
-        fit.simplex()
+    fit.migrad(None,500)
+    fitResult1=fit.values
+    fitChi1=costFunction(fitResult1)
+    # fit.reset()
+    # fit.values=np.asarray(fitResult1)
+    fit.migrad(None,500)
+    fitResult2=np.asarray(fit.values)
+    fitChi2=costFunction(fitResult2)
+    i = 1
 
-        fit.migrad(None,500)
+    while ((fitChi1 - fitChi2) ** 2 > 0.001) and i < 500:
+        if fitChi1 < fitChi2:
+            fitResult1=fitResult1
+        else:
+            firResult1=fitResult2
+        fitChi1=costFunction(fitResult1)
+        # fit.reset()
+        # fit.values=np.asarray(fitResult1)
+        fit.migrad(None,5)
+        fitResult2=fit.values
+        fitChi2=costFunction(fitResult2)
+    print(i,"loop is done")
+    # print result
 
-        # print result
+    fitResult=np.asarray(fit.values)
 
-        fitResults.append(np.asarray(fit.values))
-    
-    fitResult = min(fitResults, key=lambda x: costFunction(x))
-    print(fitResult)
-
+    print("shifted:")
+    print(ShiftFunction(fitResult))
     print("==========================================================")
     costFunction.print(fitResult)
     print("Numer of Params: ",costFunction.calResult.numberOfParams + 2)
