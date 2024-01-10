@@ -1,5 +1,0 @@
-Output for model2p1h2p1hp2p1p_No7:
-E VariableMetricBuilder Initial matrix not pos.def.
--e 
------------------------------
-

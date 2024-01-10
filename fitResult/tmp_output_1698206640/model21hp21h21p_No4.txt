@@ -1,5 +1,0 @@
-Output for model21hp21h21p_No4:
-E VariableMetricBuilder Initial matrix not pos.def.
--e 
------------------------------
-

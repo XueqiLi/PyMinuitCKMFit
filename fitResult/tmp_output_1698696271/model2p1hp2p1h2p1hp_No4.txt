@@ -1,4 +1,0 @@
-Output for model2p1hp2p1h2p1hp_No4:
--e 
------------------------------
-

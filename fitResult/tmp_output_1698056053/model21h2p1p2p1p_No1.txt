@@ -1,6 +1,0 @@
-Output for model21h2p1p2p1p_No1:
-scan done, current chi-sqr= 2601.3637812311963
-simplex done, current chi-sqr= 1025.4241018483624
--e 
------------------------------
-
