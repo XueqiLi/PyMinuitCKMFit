@@ -14,12 +14,12 @@ from Observables import *
 class CostFunction:
     errordef = Minuit.LEAST_SQUARES
     ## Bound and scale
-    commonBounds = (-10,10)
+    commonBounds = (-20,20)
     tBounds = [
         (-0.5,-0.4),        # tr
         (np.sqrt(3)/2, 0.95)   #ti
     ]
-    def __init__(self, calResult, expList, divList,modelType="normal"):
+    def __init__(self, calResult, expList, divList, modelType="normal"):
         self.calResult = calResult
         self.expList=np.asarray(expList)
         self.divList=np.asarray(divList)
@@ -64,7 +64,7 @@ class CostFunction:
         print(params)
         print("----------------------------------------------------------")
         print("Sigma Away:")
-        for i in range(13):
+        for i in range(len(self.expList)):
             print(observableName[i],": ",sigmaAway[i])
         print("----------------------------------------------------------")
 
@@ -76,8 +76,16 @@ class CostFunction:
 #     tParams = params[-2:]
 #     commonParams = [param + np.sign(param) * minScale for param in commonParams]
 #     return np.concatenate((commonParams, tParams))
+        
+def ShiftFunction(params):
+    minScale = 0.08
+    commonParams = params[:-2]
+    tParams = params[-2:]
+    commonParams = [param + np.sign(param) * minScale for param in commonParams]
+    return np.concatenate((commonParams, tParams))
 
 def main():
+    print("Start fitting...")
     # Import Model from agrument of file
     # from model import *
     modelName = sys.argv[1]
@@ -103,7 +111,7 @@ def main():
 
     # Fit!
     fitResults = []
-    for i in range(10):
+    for i in range(30):
         fit = Minuit(costFunction, costFunction.InitParams()) 
         fit.limits=costFunction.parameterBounds
         fit.strategy=2
@@ -112,7 +120,7 @@ def main():
 
         # fit.simplex()
 
-        fit.migrad()
+        fit.migrad(100000)
 
         # print result
 
