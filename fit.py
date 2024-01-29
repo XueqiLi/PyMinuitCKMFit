@@ -90,8 +90,9 @@ def main():
     # from model import *
     modelName = sys.argv[1]
     modelModule = importlib.import_module(modelName)
+    modularSwitch = sys.argv[2]
     # globals().update(vars(modelModule))
-
+    
     observables=CKMPMNSSeeSawSystem(modelModule.YuMatrix,modelModule.YdMatrix,modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams)
     costFunction = CostFunction(observables,expValList,divValList)
 
@@ -116,15 +117,14 @@ def main():
         fit.limits=costFunction.parameterBounds
         fit.strategy=2
 
-        # fit.scan(1000000)
+        try:
+            fit.migrad(100000)
+            fitResults.append(np.asarray(fit.values))
+        except:
+            continue
 
-        # fit.simplex()
 
-        fit.migrad(100000)
-
-        # print result
-
-        fitResults.append(np.asarray(fit.values))
+        
     
     fitResult = min(fitResults, key=lambda x: costFunction(x))
 
