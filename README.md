@@ -1,5 +1,5 @@
 # PyMinuitCKMFit
-A Simple Script for Fitting Flavor Observables Using PyMinuit.
+A Simple Script for Fitting Flavor Observables Using [iMinuit](https://iminuit.readthedocs.io/en/stable/).
 
 ## Example
 - See `fit_FlavorGW.ipynb` for a fitting of all sectors in traditional flavor model.
