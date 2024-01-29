@@ -19,10 +19,11 @@ class CostFunction:
         (-0.5,-0.4),        # tr
         (np.sqrt(3)/2, 0.95)   #ti
     ]
-    def __init__(self, calResult, expList, divList, modelType="normal"):
+    def __init__(self, calResult, expList, divList, modelType="normal", shiftFunction=lambda x: x):
         self.calResult = calResult
         self.expList=np.asarray(expList)
         self.divList=np.asarray(divList)
+        self.shiftFunction = shiftFunction
 
         self.numberOfParams=calResult.numberOfParams
         if modelType == "normal":
@@ -40,7 +41,7 @@ class CostFunction:
         return np.asarray((self.expList-result) ** 2 / (self.divList ** 2))
     
     def Prediction(self,params):
-        return self.calResult(params)
+        return self.calResult(self.shiftFunction(params))
     
     def InitParams(self):
         # Use this for use middle points for the init points
@@ -61,7 +62,7 @@ class CostFunction:
         sigmaAway=self.SigmaAway(params)
         observableName=self.calResult.observableName
         print("Fit Result:")
-        print(params)
+        print(self.shiftFunction(params))
         print("----------------------------------------------------------")
         print("Sigma Away:")
         for i in range(len(self.expList)):
@@ -91,6 +92,7 @@ def main():
     modelName = sys.argv[1]
     modelModule = importlib.import_module(modelName)
     modularSwitch = sys.argv[2]
+    # waiting to be done for the modular switch
     # globals().update(vars(modelModule))
     
     observables=CKMPMNSSeeSawSystem(modelModule.YuMatrix,modelModule.YdMatrix,modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams)

@@ -1,12 +1,11 @@
 import numpy as np # for calculation
 
 class GeneralCKMSystem:
-    def __init__(self,YuMatrix,YdMatrix,numberOfParams,shiftFunction=lambda x: x):
+    def __init__(self,YuMatrix,YdMatrix,numberOfParams):
         self.YuMatrix = YuMatrix
         self.YdMatrix = YdMatrix
         self.numberOfParams = numberOfParams
         self.observableName=["s12", "s23", "s13", "mu1", "mu2", "mu3", "md1", "md2", "md3"]
-        self.shiftFunction = shiftFunction
 
     def GetMixing(self, umatrix):
         s13 = umatrix[0, 2] * np.conjugate(umatrix[0, 2])
@@ -75,7 +74,7 @@ class GeneralCKMSystem:
     
 
     def __call__(self,params):
-        return self.Calculate(self.shiftFunction(params))
+        return self.Calculate(params)
     
     def Print(self,params):
         observableResult = self.__call__(params)
@@ -85,8 +84,8 @@ class GeneralCKMSystem:
 
 
 class CKMSystem(GeneralCKMSystem):
-    def __init__(self, YuMatrix, YdMatrix, numberOfParams, shiftFunction=lambda x: x):
-        super().__init__(YuMatrix, YdMatrix, numberOfParams, shiftFunction)
+    def __init__(self, YuMatrix, YdMatrix, numberOfParams):
+        super().__init__(YuMatrix, YdMatrix, numberOfParams)
         self.observableName=["s12", "s23", "s13", "mURmC", "mCRmT", "mDRmS", "mSRmB"]
 
     def CalculateCKMResult(self, params, printResult=False):
@@ -100,11 +99,11 @@ class CKMSystem(GeneralCKMSystem):
         return [s12, s23, s13, mURmC, mCRmT, mDRmS, mSRmB]
     
     def __call__(self,params):
-        return self.CalculateCKMResult(self.shiftFunction(params))
+        return self.CalculateCKMResult(params)
 
 class PMNSSystem(GeneralCKMSystem):
-    def __init__(self,YuMatrix,YdMatrix,numberOfParams,shiftFunction=lambda x: x):
-        super().__init__(YuMatrix, YdMatrix, numberOfParams, shiftFunction)
+    def __init__(self,YuMatrix,YdMatrix,numberOfParams):
+        super().__init__(YuMatrix, YdMatrix, numberOfParams)
         self.observableName=["s12", "s23", "s13", "m21Rm31", "mERmMu", "mMuRMTau"]
 
     def CalculatePMNSResult(self, params, printResult=False):
@@ -117,26 +116,25 @@ class PMNSSystem(GeneralCKMSystem):
         return [s12, s23, s13, m21Rm31, mERmMu, mMuRMTau]
     
     def __call__(self, params):
-        return self.CalculatePMNSResult(self.shiftFunction(params))
+        return self.CalculatePMNSResult(params)
 
 class PMNSSeeSawSystem(PMNSSystem):
-    def __init__(self, YuMatrix, NLMatrix, NNMatrix, numberOfParams, shiftFunction=lambda x: x):
+    def __init__(self, YuMatrix, NLMatrix, NNMatrix, numberOfParams):
         def YdMatrix(params):
             return -1 * np.dot(np.dot(np.transpose(NLMatrix(params)), np.linalg.inv(NNMatrix(params))), NLMatrix(params))
-        super().__init__(YuMatrix, YdMatrix, numberOfParams, shiftFunction)
+        super().__init__(YuMatrix, YdMatrix, numberOfParams)
         self.observableName=["s12", "s23", "s13", "m21Rm31", "mERmMu", "mMuRMTau"]
 
 class CMKPMNSSystem:
-    def __init__(self, YuMatrix, YdMatrix, YeMatrix, YnuMatrix, numberOfParams, shiftFunction=lambda x: x):
+    def __init__(self, YuMatrix, YdMatrix, YeMatrix, YnuMatrix, numberOfParams):
         self.YuMatrix = YuMatrix
         self.YdMatrix = YdMatrix
         self.YeMatrix = YeMatrix
         self.YnuMatrix = YnuMatrix
         self.numberOfParams = numberOfParams
         self.observableName=["Qs12", "Qs23", "Qs13", "mURmC", "mCRmT", "mDRmS", "mSRmB", "Ls12", "Ls23", "Ls13", "m21Rm31", "mERmMu", "mMuRMTau"]
-        self.shiftFunction = shiftFunction
-        self.QuarkSector=CKMSystem(YuMatrix, YdMatrix, numberOfParams, shiftFunction)
-        self.LeptonSector=PMNSSystem(YeMatrix, YnuMatrix, numberOfParams, shiftFunction)
+        self.QuarkSector=CKMSystem(YuMatrix, YdMatrix, numberOfParams)
+        self.LeptonSector=PMNSSystem(YeMatrix, YnuMatrix, numberOfParams)
 
     def Calculate(self, params, printResult=False):
         QuarkResult = self.QuarkSector.CalculateCKMResult(params, printResult)
@@ -145,7 +143,7 @@ class CMKPMNSSystem:
         return np.concatenate((QuarkResult, LeptonResult))
     
     def __call__(self,params):
-        return self.Calculate(self.shiftFunction(params))
+        return self.Calculate(params)
     
     def Print(self,params):
         observableResult = self.__call__(params)
@@ -158,7 +156,7 @@ class CMKPMNSSystem:
             print(self.observableName[i],": ",observableResult[i])
 
 class CKMPMNSSeeSawSystem(CMKPMNSSystem):
-    def __init__(self, YuMatrix, YdMatrix, YeMatrix, NLMatrix, NNMatrix, numberOfParams, shiftFunction=lambda x: x):
+    def __init__(self, YuMatrix, YdMatrix, YeMatrix, NLMatrix, NNMatrix, numberOfParams):
         def YnuMatrix(params):
             return -1 * np.dot(np.dot(np.transpose(NLMatrix(params)), np.linalg.inv(NNMatrix(params))), NLMatrix(params))
-        super().__init__(YuMatrix, YdMatrix, YeMatrix, YnuMatrix, numberOfParams, shiftFunction)
+        super().__init__(YuMatrix, YdMatrix, YeMatrix, YnuMatrix, numberOfParams)
