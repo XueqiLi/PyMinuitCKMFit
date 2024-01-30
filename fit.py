@@ -91,12 +91,15 @@ def main():
     # from model import *
     modelName = sys.argv[1]
     modelModule = importlib.import_module(modelName)
-    modularSwitch = sys.argv[2]
+
     # waiting to be done for the modular switch
     # globals().update(vars(modelModule))
     
-    observables=CKMPMNSSeeSawSystem(modelModule.YuMatrix,modelModule.YdMatrix,modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams)
-    costFunction = CostFunction(observables,expValList,divValList)
+    # observables=CKMPMNSSeeSawSystem(modelModule.YuMatrix,modelModule.YdMatrix,modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams)
+    # costFunction = CostFunction(observables,expValList,divValList)
+
+    observables=PMNSSeeSawSystem(modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams)
+    costFunction = CostFunction(observables,leptonExpValList,leptonDivValList,modelType = "modular",shiftFunction=ShiftFunction)
 
     fit = Minuit(costFunction, costFunction.InitParams()) 
     fit.limits=costFunction.parameterBounds
@@ -124,9 +127,6 @@ def main():
             fitResults.append(np.asarray(fit.values))
         except:
             continue
-
-
-        
     
     fitResult = min(fitResults, key=lambda x: costFunction(x))
 
@@ -136,7 +136,7 @@ def main():
     print("==========================================================")
     costFunction.Print(fitResult)
     print("===============----------------------------===============")
-    costFunction.calResult.Print(fitResult)
+    costFunction.calResult.Print(ShiftFunction(fitResult))
     print("==========================================================")
 
     return 0
