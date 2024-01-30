@@ -117,13 +117,13 @@ def main():
 
     # Fit!
     fitResults = []
-    for i in range(30):
+    for i in range(1000):
         fit = Minuit(costFunction, costFunction.InitParams()) 
         fit.limits=costFunction.parameterBounds
         fit.strategy=2
 
         try:
-            fit.migrad(100000)
+            fit.migrad(10000000)
             fitResults.append(np.asarray(fit.values))
         except:
             continue
@@ -132,7 +132,11 @@ def main():
 
     # print("shifted:")
     # print(ShiftFunction(fitResult))
-
+    
+    print("==========================================================")
+    print(modelName)
+    print("Number of parameters:")
+    print(costFunction.numberOfParams)
     print("==========================================================")
     costFunction.Print(fitResult)
     print("===============----------------------------===============")
