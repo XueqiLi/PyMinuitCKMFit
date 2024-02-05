@@ -117,13 +117,13 @@ def main():
 
     # Fit!
     fitResults = []
-    for i in range(10):
+    for i in range(30):
         fit = Minuit(costFunction, costFunction.InitParams()) 
         fit.limits=costFunction.parameterBounds
         fit.strategy=2
 
         try:
-            fit.migrad(10000)
+            fit.migrad(100000)
             fitResults.append(np.asarray(fit.values))
         except:
             continue
