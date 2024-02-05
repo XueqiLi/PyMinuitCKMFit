@@ -1,5 +1,4 @@
 import numpy as np # for calculation
-import scipy
 import sys # for import model from argument 
 import importlib # for import model
 from iminuit import Minuit # minimize program
