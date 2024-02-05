@@ -1,32 +1,38 @@
 import numpy as np # for calculation
 
 class GeneralCKMSystem:
-    def __init__(self,YuMatrix,YdMatrix,numberOfParams):
+    def __init__(self,YuMatrix,YdMatrix,numberOfParams,dCPResult=False):
         self.YuMatrix = YuMatrix
         self.YdMatrix = YdMatrix
         self.numberOfParams = numberOfParams
         self.observableName=["s12", "s23", "s13", "mu1", "mu2", "mu3", "md1", "md2", "md3"]
+        self.dCPResult = dCPResult
 
     def GetMixing(self, umatrix):
         s13 = umatrix[0, 2] * np.conjugate(umatrix[0, 2])
         if s13 == 1:
-            s12=0
-            s23=0
+            s12 = 0
+            s23 = 0
         else:
             s12 = (umatrix[0, 1] * np.conjugate(umatrix[0, 1])) / (1 - s13)
             s23 = (umatrix[1, 2] * np.conjugate(umatrix[1, 2])) / (1 - s13)
-        # c13 = 1 - s13
-        # c12 = 1 - s12
-        # c23 = 1 - s23
+            
+        c13 = 1 - s13
+        c12 = 1 - s12
+        c23 = 1 - s23
 
-        # dCP = np.angle(
-        #     ((umatrix[0, 0] * umatrix[2, 2] * np.conjugate(umatrix[0, 2]) * np.conjugate(umatrix[2, 0])) /
-        #     (np.sqrt(c12) * np.sqrt(c23) * c13 * np.sqrt(s13)) + 
-        #     np.sqrt(c12) * np.sqrt(c23) * np.sqrt(s13)) / 
-        #     (np.sqrt(s12) * np.sqrt(s23))
-        #     ) / np.pi
+        try:
+            dCP = (np.angle(
+                ((umatrix[0, 0] * umatrix[2, 2] * np.conjugate(umatrix[0, 2]) * np.conjugate(umatrix[2, 0])) /
+                (np.sqrt(c12) * np.sqrt(c23) * c13 * np.sqrt(s13)) + 
+                np.sqrt(c12) * np.sqrt(c23) * np.sqrt(s13)) / 
+                (np.sqrt(s12) * np.sqrt(s23))
+                ) / np.pi) % 2
 
-        return [s12,s23,s13]
+        except:
+            dCP = 0.5 * np.pi
+
+        return [s12, s23, s13, dCP]
     
     def SVDMixingMass(self, massMatrix):
         L, Eigen, RDagger = np.linalg.svd(massMatrix, full_matrices=True)
@@ -67,14 +73,18 @@ class GeneralCKMSystem:
         if printResult:
             print("CKM: \n",CKM)
 
-        s12, s23, s13 = self.GetMixing(CKM)
+        s12, s23, s13, dCP = self.GetMixing(CKM)
 
-        output=np.array([np.real(x) for x in [s12, s23, s13, mu1, mu2, mu3, md1, md2, md3]], dtype=float)
+        if self.dCPResult:
+            output=np.array([np.real(x) for x in [s12, s23, s13, mu1, mu2, mu3, md1, md2, md3, dCP]], dtype=float)
+        else:
+            output=np.array([np.real(x) for x in [s12, s23, s13, mu1, mu2, mu3, md1, md2, md3]], dtype=float)
+        
         return output
     
 
-    def __call__(self,params):
-        return self.Calculate(params)
+    def __call__(self,params, printResult=False):
+        return self.Calculate(params, printResult)
     
     def Print(self,params):
         observableResult = self.__call__(params)
@@ -102,28 +112,37 @@ class CKMSystem(GeneralCKMSystem):
         return self.CalculateCKMResult(params)
 
 class PMNSSystem(GeneralCKMSystem):
-    def __init__(self,YuMatrix,YdMatrix,numberOfParams):
+    def __init__(self,YuMatrix,YdMatrix,numberOfParams, dCPResult=False):
         super().__init__(YuMatrix, YdMatrix, numberOfParams)
-        self.observableName=["s12", "s23", "s13", "m21Rm31", "mERmMu", "mMuRMTau"]
+        if dCPResult:
+            self.observableName=["s12", "s23", "s13", "m21Rm31", "mERmMu", "mMuRMTau", "dCP"]
+        else:
+            self.observableName=["s12", "s23", "s13", "m21Rm31", "mERmMu", "mMuRMTau"]
+        self.dCPResult = dCPResult
 
     def CalculatePMNSResult(self, params, printResult=False):
-        s12, s23, s13, me, mmu, mtau, m1, m2, m3 = self.Calculate(params, printResult)
+        if self.dCPResult:
+            s12, s23, s13, me, mmu, mtau, m1, m2, m3, dCP = self.Calculate(params, printResult)
+        else:
+            s12, s23, s13, me, mmu, mtau, m1, m2, m3 = self.Calculate(params, printResult)
 
         m21Rm31 = (m2**2 - m1**2) / (m3**2 - m1**2)
         mERmMu = me/mmu
         mMuRMTau = mmu/mtau
 
-        return [s12, s23, s13, m21Rm31, mERmMu, mMuRMTau]
+        if self.dCPResult:
+            return [s12, s23, s13, m21Rm31, mERmMu, mMuRMTau, dCP]
+        else:
+            return [s12, s23, s13, m21Rm31, mERmMu, mMuRMTau]
     
     def __call__(self, params):
         return self.CalculatePMNSResult(params)
 
 class PMNSSeeSawSystem(PMNSSystem):
-    def __init__(self, YuMatrix, NLMatrix, NNMatrix, numberOfParams):
+    def __init__(self, YuMatrix, NLMatrix, NNMatrix, numberOfParams, dCPResult=False):
         def YdMatrix(params):
             return -1 * np.dot(np.dot(np.transpose(NLMatrix(params)), np.linalg.inv(NNMatrix(params))), NLMatrix(params))
-        super().__init__(YuMatrix, YdMatrix, numberOfParams)
-        self.observableName=["s12", "s23", "s13", "m21Rm31", "mERmMu", "mMuRMTau"]
+        super().__init__(YuMatrix, YdMatrix, numberOfParams, dCPResult)
 
 class CMKPMNSSystem:
     def __init__(self, YuMatrix, YdMatrix, YeMatrix, YnuMatrix, numberOfParams):
