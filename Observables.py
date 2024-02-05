@@ -27,7 +27,7 @@ class GeneralCKMSystem:
                 (np.sqrt(c12) * np.sqrt(c23) * c13 * np.sqrt(s13)) + 
                 np.sqrt(c12) * np.sqrt(c23) * np.sqrt(s13)) / 
                 (np.sqrt(s12) * np.sqrt(s23))
-                ) / np.pi) % 2
+                ) / np.pi) 
 
         except:
             dCP = 0.5 * np.pi
