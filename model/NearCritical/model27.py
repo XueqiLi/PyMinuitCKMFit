@@ -1,4 +1,4 @@
-# Filename: model212121p_No10.py
+# Filename: model212121p_No8.py
 import numpy as np
 from ModularForm import *
 numberOfParams = 4
