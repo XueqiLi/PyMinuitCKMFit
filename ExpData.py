@@ -22,7 +22,7 @@ leptonExpValList=[s12Exp, s23Exp, s13Exp, m21Rm31Exp, mERmMuExp, mMuRMTauExp]
 leptonDivValList=[s12Div, s23Div, s13Div, m21Rm31Div, mERmMuDiv, mMuRMTauDiv]
 
 dCPExp = np.pi
-dCPDiv = 0.1 * np.pi
+dCPDiv = 0.05 * np.pi
 
 leptonCPExpValList=[s12Exp, s23Exp, s13Exp, m21Rm31Exp, mERmMuExp, mMuRMTauExp, dCPExp]
 leptonCPDivValList=[s12Div, s23Div, s13Div, m21Rm31Div, mERmMuDiv, mMuRMTauDiv, dCPDiv]
