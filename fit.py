@@ -94,11 +94,11 @@ def main():
     # waiting to be done for the modular switch
     # globals().update(vars(modelModule))
     
-    # observables=CKMPMNSSeeSawSystem(modelModule.YuMatrix,modelModule.YdMatrix,modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams)
-    # costFunction = CostFunction(observables,expValList,divValList)
+    observables=CKMPMNSSeeSawSystem(modelModule.YuMatrix,modelModule.YdMatrix,modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams)
+    costFunction = CostFunction(observables,expValList,divValList)
 
-    observables=PMNSSeeSawSystem(modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams, dCPResult=True)
-    costFunction = CostFunction(observables,leptonCPExpValList,leptonCPDivValList,modelType = "modular",shiftFunction=ShiftFunction)
+    # observables=PMNSSeeSawSystem(modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams, dCPResult=True)
+    # costFunction = CostFunction(observables,leptonCPExpValList,leptonCPDivValList,modelType = "modular",shiftFunction=ShiftFunction)
 
     fit = Minuit(costFunction, costFunction.InitParams()) 
     fit.limits=costFunction.parameterBounds
