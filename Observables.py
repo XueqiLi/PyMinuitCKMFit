@@ -5,7 +5,10 @@ class GeneralCKMSystem:
         self.YuMatrix = YuMatrix
         self.YdMatrix = YdMatrix
         self.numberOfParams = numberOfParams
-        self.observableName=["s12", "s23", "s13", "mu1", "mu2", "mu3", "md1", "md2", "md3"]
+        if dCPResult:
+            self.observableName=["s12", "s23", "s13", "mu1", "mu2", "mu3", "md1", "md2", "md3", "dCP"]
+        else:
+            self.observableName=["s12", "s23", "s13", "mu1", "mu2", "mu3", "md1", "md2", "md3"]
         self.dCPResult = dCPResult
 
     def GetMixing(self, umatrix):
@@ -178,7 +181,7 @@ class CMKPMNSSystem:
     
     def Print(self,params):
         observableResult = self.__call__(params)
-        
+
         if self.dCPResult:
             QLSplit = 7
         else:
