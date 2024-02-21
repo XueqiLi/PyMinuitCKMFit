@@ -178,12 +178,16 @@ class CMKPMNSSystem:
     
     def Print(self,params):
         observableResult = self.__call__(params)
+        if self.dCPResult:
+            QLSplit = 7
+        else:
+            QLSplit = 8
         print("Observabls Result:")
         print("Quark:")
-        for i in range(7):
+        for i in range(QLSplit):
             print(self.observableName[i],": ",observableResult[i])
         print("Lepton:")
-        for i in range(7,13):
+        for i in range(QLSplit,len(self.observableName)):
             print(self.observableName[i],": ",observableResult[i])
 
 class CKMPMNSSeeSawSystem(CMKPMNSSystem):
