@@ -178,10 +178,12 @@ class CMKPMNSSystem:
     
     def Print(self,params):
         observableResult = self.__call__(params)
+        
         if self.dCPResult:
             QLSplit = 7
         else:
             QLSplit = 8
+
         print("Observabls Result:")
         print("Quark:")
         for i in range(QLSplit):
