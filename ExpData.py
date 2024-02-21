@@ -21,8 +21,8 @@ m21Rm31Div = 0.00084
 leptonExpValList=[s12Exp, s23Exp, s13Exp, m21Rm31Exp, mERmMuExp, mMuRMTauExp]
 leptonDivValList=[s12Div, s23Div, s13Div, m21Rm31Div, mERmMuDiv, mMuRMTauDiv]
 
-dCPExp = 0
-dCPDiv = 0.05 * np.pi
+dCPExp = 1.09444
+dCPDiv = 0.138889
 
 leptonCPExpValList=[s12Exp, s23Exp, s13Exp, m21Rm31Exp, mERmMuExp, mMuRMTauExp, dCPExp]
 leptonCPDivValList=[s12Div, s23Div, s13Div, m21Rm31Div, mERmMuDiv, mMuRMTauDiv, dCPDiv]
@@ -50,5 +50,15 @@ mSRmBDiv = 0.0010
 quarkExpValList=[Qs12Exp, Qs23Exp, Qs13Exp, mURmCExp, mCRmTExp, mDRmSExp, mSRmBExp]
 quarkDivValList=[Qs12Div, Qs23Div, Qs13Div, mURmCDiv, mCRmTDiv, mDRmSDiv, mSRmBDiv]
 
+
+dCPExp = 0.384487
+dCPDiv = 0.0172779
+
+quarkCPExpValList=[Qs12Exp, Qs23Exp, Qs13Exp, mURmCExp, mCRmTExp, mDRmSExp, mSRmBExp, dCPExp]
+quarkCPDivValList=[Qs12Div, Qs23Div, Qs13Div, mURmCDiv, mCRmTDiv, mDRmSDiv, mSRmBDiv, dCPDiv]
+
 expValList = quarkExpValList + leptonExpValList
 divValList = quarkDivValList + leptonDivValList
+
+expValListCP = quarkCPExpValList + leptonCPExpValList
+divValListCP = quarkCPDivValList + leptonCPDivValList

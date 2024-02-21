@@ -30,7 +30,7 @@ class GeneralCKMSystem:
                 ) / np.pi) 
 
         except:
-            dCP = 0.5 * np.pi
+            dCP = 0.5 
 
         return [s12, s23, s13, dCP]
     
@@ -94,31 +94,39 @@ class GeneralCKMSystem:
 
 
 class CKMSystem(GeneralCKMSystem):
-    def __init__(self, YuMatrix, YdMatrix, numberOfParams):
-        super().__init__(YuMatrix, YdMatrix, numberOfParams)
-        self.observableName=["s12", "s23", "s13", "mURmC", "mCRmT", "mDRmS", "mSRmB"]
+    def __init__(self, YuMatrix, YdMatrix, numberOfParams, dCPResult=False):
+        super().__init__(YuMatrix, YdMatrix, numberOfParams, dCPResult)
+        if dCPResult:
+            self.observableName=["s12", "s23", "s13", "mURmC", "mCRmT", "mDRmS", "mSRmB", "QdCP"]
+        else:
+            self.observableName=["s12", "s23", "s13", "mURmC", "mCRmT", "mDRmS", "mSRmB"]
 
     def CalculateCKMResult(self, params, printResult=False):
-        s12, s23, s13, mu1, mu2, mu3, md1, md2, md3 = self.Calculate(params, printResult)
+        if self.dCPResult:
+            s12, s23, s13, mu1, mu2, mu3, md1, md2, md3, dCP = self.Calculate(params, printResult)
+        else:
+            s12, s23, s13, mu1, mu2, mu3, md1, md2, md3 = self.Calculate(params, printResult)
         mURmC = mu1/mu2
         mCRmT = mu2/mu3
 
         mDRmS = md1/md2
         mSRmB = md2/md3
 
-        return [s12, s23, s13, mURmC, mCRmT, mDRmS, mSRmB]
+        if self.dCPResult:
+            return [s12, s23, s13, mURmC, mCRmT, mDRmS, mSRmB, dCP]
+        else:
+            return [s12, s23, s13, mURmC, mCRmT, mDRmS, mSRmB]
     
     def __call__(self,params):
         return self.CalculateCKMResult(params)
 
 class PMNSSystem(GeneralCKMSystem):
     def __init__(self,YuMatrix,YdMatrix,numberOfParams, dCPResult=False):
-        super().__init__(YuMatrix, YdMatrix, numberOfParams)
+        super().__init__(YuMatrix, YdMatrix, numberOfParams, dCPResult)
         if dCPResult:
             self.observableName=["s12", "s23", "s13", "m21Rm31", "mERmMu", "mMuRMTau", "dCP"]
         else:
             self.observableName=["s12", "s23", "s13", "m21Rm31", "mERmMu", "mMuRMTau"]
-        self.dCPResult = dCPResult
 
     def CalculatePMNSResult(self, params, printResult=False):
         if self.dCPResult:
@@ -145,15 +153,19 @@ class PMNSSeeSawSystem(PMNSSystem):
         super().__init__(YuMatrix, YdMatrix, numberOfParams, dCPResult)
 
 class CMKPMNSSystem:
-    def __init__(self, YuMatrix, YdMatrix, YeMatrix, YnuMatrix, numberOfParams):
+    def __init__(self, YuMatrix, YdMatrix, YeMatrix, YnuMatrix, numberOfParams, dCPResult=False):
         self.YuMatrix = YuMatrix
         self.YdMatrix = YdMatrix
         self.YeMatrix = YeMatrix
         self.YnuMatrix = YnuMatrix
         self.numberOfParams = numberOfParams
-        self.observableName=["Qs12", "Qs23", "Qs13", "mURmC", "mCRmT", "mDRmS", "mSRmB", "Ls12", "Ls23", "Ls13", "m21Rm31", "mERmMu", "mMuRMTau"]
-        self.QuarkSector=CKMSystem(YuMatrix, YdMatrix, numberOfParams)
-        self.LeptonSector=PMNSSystem(YeMatrix, YnuMatrix, numberOfParams)
+        if dCPResult:
+            self.observableName=["Qs12", "Qs23", "Qs13", "mURmC", "mCRmT", "mDRmS", "mSRmB", "QdCP",  "Ls12", "Ls23", "Ls13", "m21Rm31", "mERmMu", "mMuRMTau", "LdCP"]
+        else:
+            self.observableName=["Qs12", "Qs23", "Qs13", "mURmC", "mCRmT", "mDRmS", "mSRmB", "Ls12", "Ls23", "Ls13", "m21Rm31", "mERmMu", "mMuRMTau"]
+        self.QuarkSector=CKMSystem(YuMatrix, YdMatrix, numberOfParams, dCPResult)
+        self.LeptonSector=PMNSSystem(YeMatrix, YnuMatrix, numberOfParams, dCPResult)
+        self.dCPResult = dCPResult
 
     def Calculate(self, params, printResult=False):
         QuarkResult = self.QuarkSector.CalculateCKMResult(params, printResult)
@@ -175,7 +187,7 @@ class CMKPMNSSystem:
             print(self.observableName[i],": ",observableResult[i])
 
 class CKMPMNSSeeSawSystem(CMKPMNSSystem):
-    def __init__(self, YuMatrix, YdMatrix, YeMatrix, NLMatrix, NNMatrix, numberOfParams):
+    def __init__(self, YuMatrix, YdMatrix, YeMatrix, NLMatrix, NNMatrix, numberOfParams, dCPResult=False):
         def YnuMatrix(params):
             return -1 * np.dot(np.dot(np.transpose(NLMatrix(params)), np.linalg.inv(NNMatrix(params))), NLMatrix(params))
-        super().__init__(YuMatrix, YdMatrix, YeMatrix, YnuMatrix, numberOfParams)
+        super().__init__(YuMatrix, YdMatrix, YeMatrix, YnuMatrix, numberOfParams, dCPResult)
