@@ -183,9 +183,9 @@ class CMKPMNSSystem:
         observableResult = self.__call__(params)
 
         if self.dCPResult:
-            QLSplit = 7
-        else:
             QLSplit = 8
+        else:
+            QLSplit = 7
 
         print("Observabls Result:")
         print("Quark:")
