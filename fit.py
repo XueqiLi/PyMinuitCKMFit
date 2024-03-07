@@ -94,11 +94,16 @@ def main():
     # waiting to be done for the modular switch
     # globals().update(vars(modelModule))
     
-    observables=CKMPMNSSeeSawSystem(modelModule.YuMatrix,modelModule.YdMatrix,modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams,dCPResult=True)
-    costFunction = CostFunction(observables, expValListCP ,divValListCP)
+    # CKM + SeeSaw Lepton
+    # observables=CKMPMNSSeeSawSystem(modelModule.YuMatrix,modelModule.YdMatrix,modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams,dCPResult=True)
+    # costFunction = CostFunction(observables, expValListCP ,divValListCP)
 
+    # SeeSaw Lepton Modular
     # observables=PMNSSeeSawSystem(modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams, dCPResult=True)
     # costFunction = CostFunction(observables,leptonCPExpValList,leptonCPDivValList,modelType = "modular",shiftFunction=ShiftFunction)
+
+    observables=CKMSystem(modelModule.YuMatrix,modelModule.YdMatrix,modelModule.numberOfParams,dCPResult=True)
+    costFunction = CostFunction(observables, quarkCPExpValList ,quarkCPDivValList)
 
     fit = Minuit(costFunction, costFunction.InitParams()) 
     fit.limits=costFunction.parameterBounds
@@ -128,6 +133,14 @@ def main():
             continue
     
     fitResult = min(fitResults, key=lambda x: costFunction(x))
+
+    for i in range(10):
+        fit = Minuit(costFunction,fitResult) 
+        fit.limits=costFunction.parameterBounds
+        fit.strategy=2
+        fit.migrad(100000)
+        fitResultNew=np.asarray(fit.values)
+        fitResult=min([fitResultNew,fitResult], key=lambda x: costFunction(x))
 
     # print("shifted:")
     # print(ShiftFunction(fitResult))
