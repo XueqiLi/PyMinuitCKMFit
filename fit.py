@@ -13,7 +13,7 @@ from Observables import *
 class CostFunction:
     errordef = Minuit.LEAST_SQUARES
     ## Bound and scale
-    commonBounds = (-20,20)
+    commonBounds = (-2,2)
     tBounds = [
         (-0.5,-0.4),        # tr
         (np.sqrt(3)/2, 0.95)   #ti
@@ -70,19 +70,17 @@ class CostFunction:
 
         print("total chi-sqr: ",chiSqr)
 
-# def ShiftFunction(params):
-#     minScale = 0.08
-#     commonParams = params[:-2]
-#     tParams = params[-2:]
-#     commonParams = [param + np.sign(param) * minScale for param in commonParams]
-#     return np.concatenate((commonParams, tParams))
-        
-def ShiftFunction(params):
-    minScale = 0.08
+def ShiftFunctionModular(params):
+    minScale = 0.5
     commonParams = params[:-2]
     tParams = params[-2:]
     commonParams = [param + np.sign(param) * minScale for param in commonParams]
     return np.concatenate((commonParams, tParams))
+
+def ShiftFunction(params):
+    minScale = 0.5
+    commonParams = [param + np.sign(param) * minScale for param in params]
+    return commonParams
 
 def main():
     print("Start fitting...")
@@ -100,10 +98,15 @@ def main():
 
     # SeeSaw Lepton Modular
     # observables=PMNSSeeSawSystem(modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams, dCPResult=True)
-    # costFunction = CostFunction(observables,leptonCPExpValList,leptonCPDivValList,modelType = "modular",shiftFunction=ShiftFunction)
+    # costFunction = CostFunction(observables,leptonCPExpValList,leptonCPDivValList,modelType = "modular",shiftFunction=ShiftFunctionModular)
 
-    observables=CKMSystem(modelModule.YuMatrix,modelModule.YdMatrix,modelModule.numberOfParams,dCPResult=True)
-    costFunction = CostFunction(observables, quarkCPExpValList ,quarkCPDivValList)
+    # Simple CKM fit
+    # observables=CKMSystem(modelModule.YuMatrix,modelModule.YdMatrix,modelModule.numberOfParams,dCPResult=True)
+    # costFunction = CostFunction(observables, quarkCPExpValList ,quarkCPDivValList)
+
+    # Simple Lepton fit
+    observables=PMNSSeeSawSystem(modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams, dCPResult=True)
+    costFunction = CostFunction(observables, leptonCPExpValList,leptonCPDivValList, shiftFunction=ShiftFunction)
 
     fit = Minuit(costFunction, costFunction.InitParams()) 
     fit.limits=costFunction.parameterBounds
@@ -134,13 +137,19 @@ def main():
     
     fitResult = min(fitResults, key=lambda x: costFunction(x))
 
-    for i in range(10):
+    convergingCount = 0
+    for i in range(20):
+        OldResult = fitResult
         fit = Minuit(costFunction,fitResult) 
         fit.limits=costFunction.parameterBounds
         fit.strategy=2
         fit.migrad(100000)
         fitResultNew=np.asarray(fit.values)
         fitResult=min([fitResultNew,fitResult], key=lambda x: costFunction(x))
+        if np.all(OldResult == fitResultNew):
+            convergingCount += 1
+        if convergingCount > 3:
+            break
 
     # print("shifted:")
     # print(ShiftFunction(fitResult))
