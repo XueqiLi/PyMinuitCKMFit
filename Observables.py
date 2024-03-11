@@ -97,7 +97,7 @@ class GeneralCKMSystem:
 
 
 class CKMSystem(GeneralCKMSystem):
-    def __init__(self, YuMatrix, YdMatrix, numberOfParams, dCPResult=False):
+    def __init__(self, YuMatrix, YdMatrix, numberOfParams, dCPResult=True):
         super().__init__(YuMatrix, YdMatrix, numberOfParams, dCPResult)
         if dCPResult:
             self.observableName=["s12", "s23", "s13", "mURmC", "mCRmT", "mDRmS", "mSRmB", "QdCP"]
@@ -137,7 +137,12 @@ class PMNSSystem(GeneralCKMSystem):
         else:
             s12, s23, s13, me, mmu, mtau, m1, m2, m3 = self.Calculate(params, printResult)
 
-        m21Rm31 = (m2**2 - m1**2) / (m3**2 - m1**2)
+        DM21 = m2**2 - m1**2
+        DM31 = m3**2 - m1**2
+        if DM21 < DM31: # NO
+            m21Rm31 = DM21 / DM31
+        else: # IO
+            m21Rm31 = DM31 / DM21
         mERmMu = me/mmu
         mMuRMTau = mmu/mtau
 
@@ -166,7 +171,7 @@ class CMKPMNSSystem:
             self.observableName=["Qs12", "Qs23", "Qs13", "mURmC", "mCRmT", "mDRmS", "mSRmB", "QdCP",  "Ls12", "Ls23", "Ls13", "m21Rm31", "mERmMu", "mMuRMTau", "LdCP"]
         else:
             self.observableName=["Qs12", "Qs23", "Qs13", "mURmC", "mCRmT", "mDRmS", "mSRmB", "Ls12", "Ls23", "Ls13", "m21Rm31", "mERmMu", "mMuRMTau"]
-        self.QuarkSector=CKMSystem(YuMatrix, YdMatrix, numberOfParams, dCPResult)
+        self.QuarkSector=CKMSystem(YuMatrix, YdMatrix, numberOfParams)
         self.LeptonSector=PMNSSystem(YeMatrix, YnuMatrix, numberOfParams, dCPResult)
         self.dCPResult = dCPResult
 

@@ -10,10 +10,13 @@ from ExpData import *
 # Import Observable calculation class
 from Observables import *
 
+fittingRange = 10
+lowerBoundShift = 0.1
+
 class CostFunction:
     errordef = Minuit.LEAST_SQUARES
     ## Bound and scale
-    commonBounds = (-2,2)
+    commonBounds = (-1 * fittingRange,fittingRange)
     tBounds = [
         (-0.5,-0.4),        # tr
         (np.sqrt(3)/2, 0.95)   #ti
@@ -78,7 +81,7 @@ def ShiftFunctionModular(params):
     return np.concatenate((commonParams, tParams))
 
 def ShiftFunction(params):
-    minScale = 0.5
+    minScale = lowerBoundShift
     commonParams = [param + np.sign(param) * minScale for param in params]
     return commonParams
 
@@ -94,11 +97,11 @@ def main():
     
     # CKM + SeeSaw Lepton
     # observables=CKMPMNSSeeSawSystem(modelModule.YuMatrix,modelModule.YdMatrix,modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams,dCPResult=True)
-    # costFunction = CostFunction(observables, expValListCP ,divValListCP)
+    # costFunction = CostFunction(observables, NOexpValListCP ,NOdivValListCP)
 
     # SeeSaw Lepton Modular
     # observables=PMNSSeeSawSystem(modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams, dCPResult=True)
-    # costFunction = CostFunction(observables,leptonCPExpValList,leptonCPDivValList,modelType = "modular",shiftFunction=ShiftFunctionModular)
+    # costFunction = CostFunction(observables,leptonCPNOExpValList,leptonCPNODivValList,modelType = "modular",shiftFunction=ShiftFunctionModular)
 
     # Simple CKM fit
     # observables=CKMSystem(modelModule.YuMatrix,modelModule.YdMatrix,modelModule.numberOfParams,dCPResult=True)
@@ -106,7 +109,7 @@ def main():
 
     # Simple Lepton fit
     observables=PMNSSeeSawSystem(modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams, dCPResult=True)
-    costFunction = CostFunction(observables, leptonCPExpValList,leptonCPDivValList, shiftFunction=ShiftFunction)
+    costFunction = CostFunction(observables, leptonCPNOExpValList,leptonCPNODivValList, shiftFunction=ShiftFunction)
 
     fit = Minuit(costFunction, costFunction.InitParams()) 
     fit.limits=costFunction.parameterBounds

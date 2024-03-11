@@ -3,29 +3,56 @@ import numpy as np
 # Nuetrino Exp Data 
 # http://www.nu-fit.org/?q=node/256
 
-s12Exp = 0.303
-s12Div = 0.011
-s23Exp = 0.572
-s23Div = 0.018
-s13Exp = 0.02203
-s13Div = 0.00056
+# NO
+s12NOExp = 0.303
+s12NODiv = 0.011
+s23NOExp = 0.572
+s23NODiv = 0.018
+s13NOExp = 0.02203
+s13NODiv = 0.00056
+DM21NOExp=7.41e-5
+DM21NODiv=0.20e-5
+DM31NOExp=2.511e-3
+DM31NODiv=0.027e-3
+m21Rm31NOExp = DM21NOExp/DM31NOExp
+# m21Rm31NOExp = 0.02956
+m21Rm31NODiv = np.sqrt((DM21NODiv/DM31NOExp)**2 + (DM21NOExp * DM31NODiv/(DM31NOExp)**2)**2)
+# m21Rm31NODiv = 0.00084
+
+# IO
+s12IOExp = 0.303
+s12IODiv = 0.011
+s23IOExp = 0.578
+s23IODiv = 0.016
+s13IOExp = 0.02219
+s13IODiv = 0.00057
+DM21IOExp=7.41e-5
+DM21IODiv=0.20e-5
+DM31IOExp=-2.498e-3
+DM31IODiv=0.025e-3
+m21Rm31IOExp = DM21IOExp/DM31IOExp
+m21Rm31IODiv = np.sqrt((DM21IODiv/DM31IOExp)**2 + (DM21IOExp * DM31IODiv/(DM31IOExp)**2)**2)
+
 
 mERmMuExp = 0.0048
 mERmMuDiv = 0.0002
 mMuRMTauExp = 0.059
 mMuRMTauDiv = 0.002
 
-m21Rm31Exp = 0.02956
-m21Rm31Div = 0.00084
+leptonNOExpValList=[s12NOExp, s23NOExp, s13NOExp, m21Rm31NOExp, mERmMuExp, mMuRMTauExp]
+leptonNODivValList=[s12NODiv, s23NODiv, s13NODiv, m21Rm31NODiv, mERmMuDiv, mMuRMTauDiv]
 
-leptonExpValList=[s12Exp, s23Exp, s13Exp, m21Rm31Exp, mERmMuExp, mMuRMTauExp]
-leptonDivValList=[s12Div, s23Div, s13Div, m21Rm31Div, mERmMuDiv, mMuRMTauDiv]
+leptonIOExpValList=[s12IOExp, s23IOExp, s13IOExp, m21Rm31IOExp, mERmMuExp, mMuRMTauExp]
+leptonIODivValList=[s12IODiv, s23IODiv, s13IODiv, m21Rm31IODiv, mERmMuDiv, mMuRMTauDiv]
 
 dCPExp = 1.09444
 dCPDiv = 0.138889
 
-leptonCPExpValList=[s12Exp, s23Exp, s13Exp, m21Rm31Exp, mERmMuExp, mMuRMTauExp, dCPExp]
-leptonCPDivValList=[s12Div, s23Div, s13Div, m21Rm31Div, mERmMuDiv, mMuRMTauDiv, dCPDiv]
+leptonCPNOExpValList=leptonNOExpValList+[dCPExp]
+leptonCPNODivValList=leptonNODivValList+[dCPDiv]
+
+leptonCPIOExpValList=leptonIOExpValList+[dCPExp]
+leptonCPDIOivValList=leptonIODivValList+[dCPDiv]
 
 # Quark Exp Data evolved to the GUT scale
 # https://arxiv.org/abs/2307.14926
@@ -57,8 +84,14 @@ dCPDiv = 0.0172779
 quarkCPExpValList=[Qs12Exp, Qs23Exp, Qs13Exp, mURmCExp, mCRmTExp, mDRmSExp, mSRmBExp, dCPExp]
 quarkCPDivValList=[Qs12Div, Qs23Div, Qs13Div, mURmCDiv, mCRmTDiv, mDRmSDiv, mSRmBDiv, dCPDiv]
 
-expValList = quarkExpValList + leptonExpValList
-divValList = quarkDivValList + leptonDivValList
+NOexpValList = quarkExpValList + leptonNOExpValList
+NOdivValList = quarkDivValList + leptonNODivValList
 
-expValListCP = quarkCPExpValList + leptonCPExpValList
-divValListCP = quarkCPDivValList + leptonCPDivValList
+IOexpValList = quarkExpValList + leptonIOExpValList
+IOdivValList = quarkDivValList + leptonIODivValList
+
+NOdivValListCP = quarkCPDivValList + leptonCPDNOivValList
+NOexpValListCP = quarkCPExpValList + leptonCPNOExpValList
+
+IOexpValListCP = quarkCPExpValList + leptonCPIOExpValList
+IOdivValListCP = quarkCPDivValList + leptonCPDIOivValList
