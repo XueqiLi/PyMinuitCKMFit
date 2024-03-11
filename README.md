@@ -16,11 +16,11 @@ A Simple Script for Fitting Flavor Observables Using [iMinuit](https://iminuit.r
 
 ### Examples
 An example to fit the lepton sector with a model of see-saw mechanism, inverted ordering, with deltaCP phase in lepton sector, given the parameters are from 0.1 to 2:
-`python3 fit.py -l -IO -s -cp -up 2 -low 0.1 -f model/SimpleFNLepton/model1.py`
+```python3 fit.py -l -IO -s -cp -up 2 -low 0.1 -f model/SimpleFNLepton/model1.py```
 
 An example to fit the quark sector given the parameters are from 0.1 to 2:
-`python3 fit.py -q -up 2 -low 0.1 -f model/QuarkModel.py`
+```python3 fit.py -q -up 2 -low 0.1 -f model/QuarkModel.py```
 
 An example to fit both lepton and quark sector with a model of see-saw mechanism, normal ordering, with deltaCP phase in lepton sector, given the parameters are from 0.1 to 2:
-`python3 fit.py -q -l -NO -s -cp -up 2 -low 0.1 -f model/FlavorGW/model1.py`
+```python3 fit.py -q -l -NO -s -cp -up 2 -low 0.1 -f model/FlavorGW/model1.py```
 
