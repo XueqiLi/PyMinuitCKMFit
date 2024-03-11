@@ -138,11 +138,13 @@ class PMNSSystem(GeneralCKMSystem):
             s12, s23, s13, me, mmu, mtau, m1, m2, m3 = self.Calculate(params, printResult)
 
         DM21 = m2**2 - m1**2
-        DM31 = m3**2 - m1**2
+        DM31 = m3**2 - m2**2
         if DM21 < DM31: # NO
             m21Rm31 = DM21 / DM31
+            OrderQ = "NO"
         else: # IO
-            m21Rm31 = DM31 / DM21
+            m21Rm31 = -1 * DM31 / DM21
+            OrderQ = "IO"
         mERmMu = me/mmu
         mMuRMTau = mmu/mtau
 

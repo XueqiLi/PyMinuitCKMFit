@@ -90,7 +90,7 @@ NOdivValList = quarkDivValList + leptonNODivValList
 IOexpValList = quarkExpValList + leptonIOExpValList
 IOdivValList = quarkDivValList + leptonIODivValList
 
-NOdivValListCP = quarkCPDivValList + leptonCPDNOivValList
+NOdivValListCP = quarkCPDivValList + leptonCPNODivValList
 NOexpValListCP = quarkCPExpValList + leptonCPNOExpValList
 
 IOexpValListCP = quarkCPExpValList + leptonCPIOExpValList

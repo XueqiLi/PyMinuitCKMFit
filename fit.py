@@ -2,6 +2,8 @@ import numpy as np # for calculation
 import sys # for import model from argument 
 import importlib # for import model
 from iminuit import Minuit # minimize program
+import argparse
+import os
 
 # Import fixed data
 from ModularForm import *
@@ -16,16 +18,17 @@ lowerBoundShift = 0.1
 class CostFunction:
     errordef = Minuit.LEAST_SQUARES
     ## Bound and scale
-    commonBounds = (-1 * fittingRange,fittingRange)
     tBounds = [
         (-0.5,-0.4),        # tr
         (np.sqrt(3)/2, 0.95)   #ti
     ]
-    def __init__(self, calResult, expList, divList, modelType="normal", shiftFunction=lambda x: x):
+    def __init__(self, calResult, expList, divList, modelType="normal", shiftFunction=lambda x: x, upper=20.0):
         self.calResult = calResult
         self.expList=np.asarray(expList)
         self.divList=np.asarray(divList)
         self.shiftFunction = shiftFunction
+        self.upper = upper
+        self.commonBounds = (-1 * upper,upper)
 
         self.numberOfParams=calResult.numberOfParams
         if modelType == "normal":
@@ -73,59 +76,118 @@ class CostFunction:
 
         print("total chi-sqr: ",chiSqr)
 
-def ShiftFunctionModular(params):
-    minScale = 0.5
-    commonParams = params[:-2]
-    tParams = params[-2:]
-    commonParams = [param + np.sign(param) * minScale for param in commonParams]
-    return np.concatenate((commonParams, tParams))
-
-def ShiftFunction(params):
-    minScale = lowerBoundShift
-    commonParams = [param + np.sign(param) * minScale for param in params]
-    return commonParams
 
 def main():
-    print("Start fitting...")
-    # Import Model from agrument of file
-    # from model import *
-    modelName = sys.argv[1]
-    modelModule = importlib.import_module(modelName)
+    parser = argparse.ArgumentParser(description='Process some arguments.')
+    parser.add_argument('-q', action='store_true', help='fit quark')
+    parser.add_argument('-l', action='store_true', help='fit lepton')
+    parser.add_argument('-s', action='store_true', help='nuetrino mass is from seesaw')
+    parser.add_argument('-NO', action='store_true', help='fit NO lepton')
+    parser.add_argument('-IO', action='store_true', help='fit IO lepton')
+    parser.add_argument('-cp', action='store_true', help='fit CP phase')
+    parser.add_argument('-m', action='store_true', help='modular model')
+    parser.add_argument('-three', action='store_true', help='fit for 3 sigma range')
+    parser.add_argument('-up', type=float, required=True, help='Upper bound value')
+    parser.add_argument('-low', type=float, required=True, help='Lower bound value')
+    parser.add_argument('-f', dest='filePath', type=str, required=True, help='Path to the model file')
+    args = parser.parse_args()
+    filePath = args.filePath
 
-    # waiting to be done for the modular switch
-    # globals().update(vars(modelModule))
+    def ShiftFunctionModular(params):
+        minScale = args.low
+        commonParams = params[:-2]
+        tParams = params[-2:]
+        commonParams = [param + np.sign(param) * minScale for param in commonParams]
+        return np.concatenate((commonParams, tParams))
+
+    def ShiftFunction(params):
+        minScale = args.low
+        commonParams = [param + np.sign(param) * minScale for param in params]
+        return commonParams
+
+
+    ExpList=[]
+    DivList=[]
+    if args.q: 
+        quarkswtich = True
+        ExpList=ExpList + quarkCPExpValList
+        DivList=DivList + quarkCPDivValList
+        cpSwitch = True # for quark, always fit CP phase
+    else:
+        quarkswtich = False
+    if args.l:
+        leptonSwitch = True
+        if args.s:
+            seesawSwitch = True
+        else:  
+            seesawSwitch = False
+        if args.NO: 
+            ExpList=ExpList + leptonNOExpValList
+            DivList=DivList + leptonNODivValList
+        if args.IO:
+            ExpList=ExpList + leptonIOExpValList
+            DivList=DivList + leptonIODivValList
+        if args.cp:
+            cpSwitch = True
+            ExpList=ExpList + [dCPExp]
+            DivList=DivList + [dCPDiv]
+        else:
+            cpSwitch = False
+        if not args.NO and not args.IO:
+            print("You must choose NO or IO for lepton")
+            return 1
+    else:
+        leptonSwitch = False
+    if args.m:    
+        shift = ShiftFunctionModular
+        modularType = "modular"
+    else:
+        shift = ShiftFunction
+        modularType = "normal"
     
-    # CKM + SeeSaw Lepton
-    # observables=CKMPMNSSeeSawSystem(modelModule.YuMatrix,modelModule.YdMatrix,modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams,dCPResult=True)
-    # costFunction = CostFunction(observables, NOexpValListCP ,NOdivValListCP)
+    if args.three:
+        DivList = [x * 3 for x in DivList]
+        
+    
+    directory, moduleName = os.path.split(filePath)
+    moduleName = os.path.splitext(moduleName)[0]
 
-    # SeeSaw Lepton Modular
-    # observables=PMNSSeeSawSystem(modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams, dCPResult=True)
-    # costFunction = CostFunction(observables,leptonCPNOExpValList,leptonCPNODivValList,modelType = "modular",shiftFunction=ShiftFunctionModular)
+    spec = importlib.util.spec_from_file_location(moduleName, filePath)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    
+    if quarkswtich:
+        if leptonSwitch:
+            if seesawSwitch:
+                    observables=CKMPMNSSeeSawSystem(module.YuMatrix,module.YdMatrix,module.ELMatrix,module.NLMatrix,module.NNMatrix,module.numberOfParams,dCPResult=cpSwitch)
+                    costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=args.up)
+            else:
+                observables=CMKPMNSSystem(module.YuMatrix,module.YdMatrix,module.ELMatrix,module.NLMatrix,module.numberOfParams,dCPResult=cpSwitch)
+                costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=args.up)
+        else:
+            observables=CKMSystem(module.YuMatrix,module.YdMatrix,module.numberOfParams,dCPResult=cpSwitch)
+            costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=args.up)
+    else:
+        if leptonSwitch:
+            if seesawSwitch:
+                observables=PMNSSeeSawSystem(module.ELMatrix,module.NLMatrix,module.NNMatrix,module.numberOfParams,dCPResult=cpSwitch)
+                costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=args.up)
+            else:
+                observables=PMNSSystem(module.ELMatrix,module.NLMatrix,module.numberOfParams,dCPResult=cpSwitch)
+                costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=args.up)
+        else:
+            print("No fitting target")
+            return 1
+            
 
-    # Simple CKM fit
-    # observables=CKMSystem(modelModule.YuMatrix,modelModule.YdMatrix,modelModule.numberOfParams,dCPResult=True)
-    # costFunction = CostFunction(observables, quarkCPExpValList ,quarkCPDivValList)
-
-    # Simple Lepton fit
-    observables=PMNSSeeSawSystem(modelModule.ELMatrix,modelModule.NLMatrix,modelModule.NNMatrix,modelModule.numberOfParams, dCPResult=True)
-    costFunction = CostFunction(observables, leptonCPNOExpValList,leptonCPNODivValList, shiftFunction=ShiftFunction)
+    print("Start fitting...")
 
     fit = Minuit(costFunction, costFunction.InitParams()) 
     fit.limits=costFunction.parameterBounds
     fit.strategy=2
 
-    # fit.scan(100000000)
-    # print("scan done, current chi-sqr=",costFunction(np.asarray(fit.values)))
-
-    # fit.simplex()
-    # print("simplex done, current chi-sqr=",costFunction(np.asarray(fit.values)))
-
-    # fit.migrad(None,500)
-
-    # fitResult = np.asarray(fit.values)
-
     # Fit!
+    # fit on different points
     fitResults = []
     for i in range(30):
         fit = Minuit(costFunction, costFunction.InitParams()) 
@@ -140,13 +202,17 @@ def main():
     
     fitResult = min(fitResults, key=lambda x: costFunction(x))
 
+    # for the best fit, fit the point around it
     convergingCount = 0
     for i in range(20):
         OldResult = fitResult
         fit = Minuit(costFunction,fitResult) 
         fit.limits=costFunction.parameterBounds
         fit.strategy=2
-        fit.migrad(100000)
+        try:
+            fit.migrad(100000)
+        except:
+            continue
         fitResultNew=np.asarray(fit.values)
         fitResult=min([fitResultNew,fitResult], key=lambda x: costFunction(x))
         if np.all(OldResult == fitResultNew):
@@ -158,7 +224,7 @@ def main():
     # print(ShiftFunction(fitResult))
     
     print("==========================================================")
-    print(modelName)
+    print(moduleName)
     print("Number of parameters:")
     print(costFunction.numberOfParams)
     print("==========================================================")
