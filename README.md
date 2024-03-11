@@ -11,7 +11,7 @@ A Simple Script for Fitting Flavor Observables Using [iMinuit](https://iminuit.r
 |`-cd`| Fit the lepton sector with delta CP|
 |`-s`| Use if the model use a see-saw mechanism for neutrino masses|
 |`-m`| Use if you are using a modular flavor model (need to put modular form infor in `ModularForm.py`)|
-|`-up [numbers]`| The upper bound of the parameters, defult `20.0` |
+|`-up [numbers]`| The fitting range of the parameters, the upper bound would be `low+up`, defult `20.0` |
 |`-low [numbers]`| The lower bound of the parametersm defult `0.0` |
 |`-mig [numbers]`| Number of `migrad` iteration, defult `100000` |
 |`-scan [numbers]`| Number of initial points in the begining, around each point, a `migrad` fit will be proformed, defult `30` |
