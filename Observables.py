@@ -25,12 +25,12 @@ class GeneralCKMSystem:
         c23 = 1 - s23
 
         try:
-            dCP = (np.angle(
+            dCP = ((np.angle(
                 ((umatrix[0, 0] * umatrix[2, 2] * np.conjugate(umatrix[0, 2]) * np.conjugate(umatrix[2, 0])) /
                 (np.sqrt(c12) * np.sqrt(c23) * c13 * np.sqrt(s13)) + 
                 np.sqrt(c12) * np.sqrt(c23) * np.sqrt(s13)) / 
                 (np.sqrt(s12) * np.sqrt(s23))
-                ) / np.pi) 
+                ) / np.pi) ) % 2.0
 
         except:
             dCP = 0.5 

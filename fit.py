@@ -12,9 +12,6 @@ from ExpData import *
 # Import Observable calculation class
 from Observables import *
 
-fittingRange = 10
-lowerBoundShift = 0.1
-
 class CostFunction:
     errordef = Minuit.LEAST_SQUARES
     ## Bound and scale
@@ -87,21 +84,40 @@ def main():
     parser.add_argument('-cp', action='store_true', help='fit CP phase')
     parser.add_argument('-m', action='store_true', help='modular model')
     parser.add_argument('-three', action='store_true', help='fit for 3 sigma range')
-    parser.add_argument('-up', type=float, required=True, help='Upper bound value')
-    parser.add_argument('-low', type=float, required=True, help='Lower bound value')
+    parser.add_argument('-up', type=float, help='Upper bound value')
+    parser.add_argument('-low', type=float, help='Lower bound value')
+    parser.add_argument('-mig', type=int, help='number of migrad iteration')
+    parser.add_argument('-scan', type=int, help='number of initial points in the begining')
+    parser.add_argument('-itr', type=int, help='number of iteration for scan around the best fit')
     parser.add_argument('-f', dest='filePath', type=str, required=True, help='Path to the model file')
     args = parser.parse_args()
+
     filePath = args.filePath
+    if args.mig:
+        migradN = args.mig
+    else:
+        migradN = 100000
+    if args.scan:
+        scanN = args.scan
+    else:
+        scanN = 30
+    if args.itr:    
+        itrN = args.itr
+    else:    
+        itrN = 20
+    
+    lower = args.low if args.low else 0.0
+    upper = args.up if args.up else 20.0
 
     def ShiftFunctionModular(params):
-        minScale = args.low
+        minScale = lower
         commonParams = params[:-2]
         tParams = params[-2:]
         commonParams = [param + np.sign(param) * minScale for param in commonParams]
         return np.concatenate((commonParams, tParams))
 
     def ShiftFunction(params):
-        minScale = args.low
+        minScale = lower
         commonParams = [param + np.sign(param) * minScale for param in params]
         return commonParams
 
@@ -160,21 +176,21 @@ def main():
         if leptonSwitch:
             if seesawSwitch:
                     observables=CKMPMNSSeeSawSystem(module.YuMatrix,module.YdMatrix,module.ELMatrix,module.NLMatrix,module.NNMatrix,module.numberOfParams,dCPResult=cpSwitch)
-                    costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=args.up)
+                    costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=upper)
             else:
                 observables=CMKPMNSSystem(module.YuMatrix,module.YdMatrix,module.ELMatrix,module.NLMatrix,module.numberOfParams,dCPResult=cpSwitch)
-                costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=args.up)
+                costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=upper)
         else:
             observables=CKMSystem(module.YuMatrix,module.YdMatrix,module.numberOfParams,dCPResult=cpSwitch)
-            costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=args.up)
+            costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=upper)
     else:
         if leptonSwitch:
             if seesawSwitch:
                 observables=PMNSSeeSawSystem(module.ELMatrix,module.NLMatrix,module.NNMatrix,module.numberOfParams,dCPResult=cpSwitch)
-                costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=args.up)
+                costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=upper)
             else:
                 observables=PMNSSystem(module.ELMatrix,module.NLMatrix,module.numberOfParams,dCPResult=cpSwitch)
-                costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=args.up)
+                costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=upper)
         else:
             print("No fitting target")
             return 1
@@ -182,20 +198,16 @@ def main():
 
     print("Start fitting...")
 
-    fit = Minuit(costFunction, costFunction.InitParams()) 
-    fit.limits=costFunction.parameterBounds
-    fit.strategy=2
-
     # Fit!
     # fit on different points
     fitResults = []
-    for i in range(30):
+    for i in range(scanN):
         fit = Minuit(costFunction, costFunction.InitParams()) 
         fit.limits=costFunction.parameterBounds
         fit.strategy=2
 
         try:
-            fit.migrad(100000)
+            fit.migrad(migradN)
             fitResults.append(np.asarray(fit.values))
         except:
             continue
@@ -204,13 +216,13 @@ def main():
 
     # for the best fit, fit the point around it
     convergingCount = 0
-    for i in range(20):
+    for i in range(itrN):
         OldResult = fitResult
         fit = Minuit(costFunction,fitResult) 
         fit.limits=costFunction.parameterBounds
         fit.strategy=2
         try:
-            fit.migrad(100000)
+            fit.migrad(migradN)
         except:
             continue
         fitResultNew=np.asarray(fit.values)
