@@ -48,9 +48,11 @@ def main():
     else:    
         itrN = 20
     
+    # Set the bound
     lower = args.low if args.low else 0.0
     upper = args.up if args.up else 20.0
 
+    # Define the shift function for lower bound
     def ShiftFunctionModular(params):
         minScale = lower
         commonParams = params[:-2]
@@ -113,6 +115,17 @@ def main():
     spec = importlib.util.spec_from_file_location(moduleName, filePath)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+
+    # Check if model file has the necessary mass matrices
+    if quarkswtich and (not hasattr(module, 'YuMatrix') or not hasattr(module, 'YdMatrix')):
+        print("Error: Model does not have YuMatrix or YdMatrix for quark fitting.")
+        return 1
+    if leptonSwitch and (not hasattr(module, 'ELMatrix') or not hasattr(module, 'NLMatrix')):
+        print("Error: Model does not have ELMatrix or NLMatrix for lepton fitting.")
+        return 1
+    if seesawSwitch and not hasattr(module, 'NNMatrix'):
+        print("Error: Model does not have NNMatrix for seesaw fitting.")
+        return 1
     
     # Construct the observables and cost function
     if quarkswtich:
