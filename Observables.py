@@ -172,7 +172,7 @@ class CMKPMNSSystem:
         if dCPResult:
             self.observableName=["Qs12", "Qs23", "Qs13", "mURmC", "mCRmT", "mDRmS", "mSRmB", "QdCP",  "Ls12", "Ls23", "Ls13", "m21Rm31", "mERmMu", "mMuRMTau", "LdCP"]
         else:
-            self.observableName=["Qs12", "Qs23", "Qs13", "mURmC", "mCRmT", "mDRmS", "mSRmB", "Ls12", "Ls23", "Ls13", "m21Rm31", "mERmMu", "mMuRMTau"]
+            self.observableName=["Qs12", "Qs23", "Qs13", "mURmC", "mCRmT", "mDRmS", "mSRmB", "QdCP",  "Ls12", "Ls23", "Ls13", "m21Rm31", "mERmMu", "mMuRMTau"] # always fit quark delta CP
         self.QuarkSector=CKMSystem(YuMatrix, YdMatrix, numberOfParams)
         self.LeptonSector=PMNSSystem(YeMatrix, YnuMatrix, numberOfParams, dCPResult)
         self.dCPResult = dCPResult

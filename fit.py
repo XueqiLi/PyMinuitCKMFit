@@ -87,8 +87,8 @@ def main():
             DivList=DivList + leptonIODivValList
         if args.cp:
             cpSwitch = True
-            ExpList=ExpList + [dCPExp]
-            DivList=DivList + [dCPDiv]
+            ExpList=ExpList + [LdCPExp]
+            DivList=DivList + [LdCPDiv]
         else:
             cpSwitch = False
         if not args.NO and not args.IO:
@@ -140,6 +140,7 @@ def main():
             
     # Fit!
     # fit on different points
+    
     print("Start fitting...")
 
     fitResults = []

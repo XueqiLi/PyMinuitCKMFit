@@ -45,14 +45,14 @@ leptonNODivValList=[s12NODiv, s23NODiv, s13NODiv, m21Rm31NODiv, mERmMuDiv, mMuRM
 leptonIOExpValList=[s12IOExp, s23IOExp, s13IOExp, m21Rm31IOExp, mERmMuExp, mMuRMTauExp]
 leptonIODivValList=[s12IODiv, s23IODiv, s13IODiv, m21Rm31IODiv, mERmMuDiv, mMuRMTauDiv]
 
-dCPExp = 1.09444
-dCPDiv = 0.138889
+LdCPExp = 1.09444
+LdCPDiv = 0.138889
 
-leptonCPNOExpValList=leptonNOExpValList+[dCPExp]
-leptonCPNODivValList=leptonNODivValList+[dCPDiv]
+leptonCPNOExpValList=leptonNOExpValList+[LdCPExp]
+leptonCPNODivValList=leptonNODivValList+[LdCPDiv]
 
-leptonCPIOExpValList=leptonIOExpValList+[dCPExp]
-leptonCPDIOivValList=leptonIODivValList+[dCPDiv]
+leptonCPIOExpValList=leptonIOExpValList+[LdCPExp]
+leptonCPDIOivValList=leptonIODivValList+[LdCPDiv]
 
 # Quark Exp Data evolved to the GUT scale
 # https://arxiv.org/abs/2307.14926
@@ -78,11 +78,11 @@ quarkExpValList=[Qs12Exp, Qs23Exp, Qs13Exp, mURmCExp, mCRmTExp, mDRmSExp, mSRmBE
 quarkDivValList=[Qs12Div, Qs23Div, Qs13Div, mURmCDiv, mCRmTDiv, mDRmSDiv, mSRmBDiv]
 
 
-dCPExp = 0.384487
-dCPDiv = 0.0172779
+QdCPExp = 0.384487
+QdCPDiv = 0.0172779
 
-quarkCPExpValList=[Qs12Exp, Qs23Exp, Qs13Exp, mURmCExp, mCRmTExp, mDRmSExp, mSRmBExp, dCPExp]
-quarkCPDivValList=[Qs12Div, Qs23Div, Qs13Div, mURmCDiv, mCRmTDiv, mDRmSDiv, mSRmBDiv, dCPDiv]
+quarkCPExpValList=[Qs12Exp, Qs23Exp, Qs13Exp, mURmCExp, mCRmTExp, mDRmSExp, mSRmBExp, QdCPExp]
+quarkCPDivValList=[Qs12Div, Qs23Div, Qs13Div, mURmCDiv, mCRmTDiv, mDRmSDiv, mSRmBDiv, QdCPDiv]
 
 NOexpValList = quarkExpValList + leptonNOExpValList
 NOdivValList = quarkDivValList + leptonNODivValList
