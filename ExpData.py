@@ -59,11 +59,11 @@ leptonCPDIOivValList=leptonIODivValList+[LdCPDiv]
 # https://arxiv.org/abs/1306.6879
 
 Qs12Exp = 0.0508255
-Qs12Div = 4.40191e-07
-Qs23Exp = 1.21801e-07
-Qs23Div = 1.691e-08
-Qs13Exp = 0.151647
-Qs13Div = 2.50814e-07
+Qs12Div = 0.000307938
+Qs23Exp = 0.0000121801
+Qs23Div = 9.24292e-07
+Qs13Exp = 0.00159915
+Qs13Div = 0.0000483077
 
 mURmCExp = 0.00193
 mURmCDiv = 0.00060
