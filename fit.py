@@ -68,6 +68,12 @@ def main():
     # Construct the fitting target
     ExpList=[]
     DivList=[]
+
+    seesawSwitch = False
+    cpSwitch = False
+    leptonSwitch = False
+    quarkswtich = False
+
     if args.q: 
         quarkswtich = True
         ExpList=ExpList + quarkCPExpValList
@@ -131,8 +137,8 @@ def main():
     if quarkswtich:
         if leptonSwitch:
             if seesawSwitch:
-                    observables=CKMPMNSSeeSawSystem(module.YuMatrix,module.YdMatrix,module.ELMatrix,module.NLMatrix,module.NNMatrix,module.numberOfParams,dCPResult=cpSwitch)
-                    costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=upper)
+                observables=CKMPMNSSeeSawSystem(module.YuMatrix,module.YdMatrix,module.ELMatrix,module.NLMatrix,module.NNMatrix,module.numberOfParams,dCPResult=cpSwitch)
+                costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=upper)
             else:
                 observables=CMKPMNSSystem(module.YuMatrix,module.YdMatrix,module.ELMatrix,module.NLMatrix,module.numberOfParams,dCPResult=cpSwitch)
                 costFunction = CostFunction(observables, ExpList, DivList, modelType = modularType, shiftFunction=shift, upper=upper)
