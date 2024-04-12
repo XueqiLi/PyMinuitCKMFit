@@ -16,8 +16,8 @@ DM31NOExp=2.511e-3
 DM31NODiv=0.027e-3
 m21Rm31NOExp = DM21NOExp/DM31NOExp
 # m21Rm31NOExp = 0.02956
-m21Rm31NODiv = np.sqrt((DM21NODiv/DM31NOExp)**2 + (DM21NOExp * DM31NODiv/(DM31NOExp)**2)**2)
-# m21Rm31NODiv = 0.00084
+m21Rm31NODiv = np.sqrt((DM21NODiv/DM31NOExp)**2 + (DM21NOExp * DM31NODiv/((DM31NOExp)**2))**2)
+# m21Rm31NODiv = 0.00084 #Here I am using the values of your table
 
 # IO
 s12IOExp = 0.303
@@ -31,13 +31,13 @@ DM21IODiv=0.20e-5
 DM31IOExp=-2.498e-3
 DM31IODiv=0.025e-3
 m21Rm31IOExp = DM21IOExp/DM31IOExp
-m21Rm31IODiv = np.sqrt((DM21IODiv/DM31IOExp)**2 + (DM21IOExp * DM31IODiv/(DM31IOExp)**2)**2)
+m21Rm31IODiv = np.sqrt((DM21IODiv/DM31IOExp)**2 + (DM21IOExp * DM31IODiv/((DM31IOExp)**2))**2)
 
-
-mERmMuExp = 0.0048
-mERmMuDiv = 0.0002
-mMuRMTauExp = 0.059
-mMuRMTauDiv = 0.002
+#I changed these ones to be the ones in your table.
+mERmMuExp = 0.00474
+mERmMuDiv = 0.00004
+mMuRMTauExp = 0.0588
+mMuRMTauDiv = 0.0005
 
 leptonNOExpValList=[s12NOExp, s23NOExp, s13NOExp, m21Rm31NOExp, mERmMuExp, mMuRMTauExp]
 leptonNODivValList=[s12NODiv, s23NODiv, s13NODiv, m21Rm31NODiv, mERmMuDiv, mMuRMTauDiv]
@@ -45,8 +45,8 @@ leptonNODivValList=[s12NODiv, s23NODiv, s13NODiv, m21Rm31NODiv, mERmMuDiv, mMuRM
 leptonIOExpValList=[s12IOExp, s23IOExp, s13IOExp, m21Rm31IOExp, mERmMuExp, mMuRMTauExp]
 leptonIODivValList=[s12IODiv, s23IODiv, s13IODiv, m21Rm31IODiv, mERmMuDiv, mMuRMTauDiv]
 
-LdCPExp = 1.09444
-LdCPDiv = 0.138889
+LdCPExp = 1.09 #I assume this is delta CP in radians for leptons, it was  1.09444
+LdCPDiv = 0.23 #I assume this is delta CP in radians for leptons, it was  0.138889
 
 leptonCPNOExpValList=leptonNOExpValList+[LdCPExp]
 leptonCPNODivValList=leptonNODivValList+[LdCPDiv]
@@ -58,12 +58,13 @@ leptonCPDIOivValList=leptonIODivValList+[LdCPDiv]
 # https://arxiv.org/abs/2307.14926
 # https://arxiv.org/abs/1306.6879
 
-Qs12Exp = 0.0508255
-Qs12Div = 0.000307938
-Qs23Exp = 0.0000121801
-Qs23Div = 9.24292e-07
-Qs13Exp = 0.00159915
-Qs13Div = 0.0000483077
+#NOTE THAT HESE SHOULD BE THE SIN^2(THETA)
+Qs12Exp = 0.0508 #I used the correct sigfigs
+Qs12Div = 0.0003  #I used the correct sigfigs
+Qs23Exp =0.00160 #Here you had 23 and 13 shifted
+Qs23Div =0.00004
+Qs13Exp = 0.0000121
+Qs13Div = 9.1e-07
 
 mURmCExp = 0.00193
 mURmCDiv = 0.00060
@@ -78,8 +79,8 @@ quarkExpValList=[Qs12Exp, Qs23Exp, Qs13Exp, mURmCExp, mCRmTExp, mDRmSExp, mSRmBE
 quarkDivValList=[Qs12Div, Qs23Div, Qs13Div, mURmCDiv, mCRmTDiv, mDRmSDiv, mSRmBDiv]
 
 
-QdCPExp = 0.384487
-QdCPDiv = 0.0172779
+QdCPExp = 0.3845 #It was 0.384487. I am assuming these are radians
+QdCPDiv = 0.0172
 
 quarkCPExpValList=[Qs12Exp, Qs23Exp, Qs13Exp, mURmCExp, mCRmTExp, mDRmSExp, mSRmBExp, QdCPExp]
 quarkCPDivValList=[Qs12Div, Qs23Div, Qs13Div, mURmCDiv, mCRmTDiv, mDRmSDiv, mSRmBDiv, QdCPDiv]
