@@ -5,8 +5,10 @@ class CostFunction:
     errordef = Minuit.LEAST_SQUARES
     ## Bound and scale
     tBounds = [
-        (-0.5,-0.4),        # tr
-        (np.sqrt(3)/2, 0.95)   #ti
+        # (-0.5,-0.4),        # tr
+        # (np.sqrt(3)/2, 0.95)   #ti
+        (-0.1,0.1),        # tr
+        (0.9, 1.1)   #ti
     ]
     def __init__(self, calResult, expList, divList, modelType="normal", shiftFunction=lambda x: x, upper=20.0):
         self.calResult = calResult
