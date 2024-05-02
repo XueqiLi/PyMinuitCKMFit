@@ -13,6 +13,8 @@ from ExpData import *
 from Observables import *
 from CostFunction import *
 
+from ModelChecking import *
+
 
 def main():
     # Arguments
@@ -24,6 +26,7 @@ def main():
     parser.add_argument('-IO', action='store_true', help='fit IO lepton')
     parser.add_argument('-cp', action='store_true', help='fit CP phase')
     parser.add_argument('-m', action='store_true', help='modular model')
+    parser.add_argument('-check', action='store_true', help='check model using `ModelChecking.py`')
     parser.add_argument('-three', action='store_true', help='fit for 3 sigma range')
     parser.add_argument('-up', type=float, help='Upper bound value')
     parser.add_argument('-low', type=float, help='Lower bound value')
@@ -47,6 +50,8 @@ def main():
         itrN = args.itr
     else:    
         itrN = 20
+
+    checkingSwitch=args.check
     
     # Set the bound
     lower = args.low if args.low else 0.0
@@ -157,6 +162,7 @@ def main():
             print("No fitting target")
             return 1
             
+
     # Fit!
     # fit on different points
     
@@ -200,9 +206,15 @@ def main():
     print("Number of parameters:")
     print(costFunction.numberOfParams)
     print("==========================================================")
+    costFunction.calResult.Print(ShiftFunction(fitResult))
+    print("===============----------------------------===============")
     costFunction.Print(fitResult)
     print("===============----------------------------===============")
-    costFunction.calResult.Print(ShiftFunction(fitResult))
+    print("Number of parameters:")
+    print(costFunction.numberOfParams)
+    if checkingSwitch:
+        print("ModelChecking:", ModelCheck(module.NNMatrix, module.NLMatrix, module.ELMatrix, ShiftFunction(fitResult)))
+        ModelCheckPrint(module.NNMatrix, module.NLMatrix, module.ELMatrix, ShiftFunction(fitResult))
     print("==========================================================")
 
     return 0
