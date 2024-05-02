@@ -1,12 +1,12 @@
 import numpy as np # for calculation
 from iminuit import Minuit # minimize program
-
+tauRange=0.01
 class CostFunction:
     errordef = Minuit.LEAST_SQUARES
     ## Bound and scale
     tBounds = [
-        (-0.5,-0.49),        # tr
-        (np.sqrt(3)/2, np.sqrt(3)/2+0.01)   #ti
+        (-0.5,-0.5+ tauRange),        # tr
+        (np.sqrt(3)/2, np.sqrt(3)/2+tauRange)   #ti
         # (-0.1,0.1),        # tr
         # (0.9, 1.1)   #ti
     ]
