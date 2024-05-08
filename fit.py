@@ -127,6 +127,15 @@ def main():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
+    # Read the first line of the model file, which should have the model information
+    moduleInfoSwitch = True
+    with open(filePath, 'r') as file:
+        first_line = file.readline().strip()
+        if first_line.startswith('#'):
+            moduleInfo = first_line[1:].strip()  # Remove the '#' and any leading/trailing spaces
+        else:
+            moduleInfoSwitch = False
+
     # Check if model file has the necessary mass matrices
     if quarkswtich and (not hasattr(module, 'YuMatrix') or not hasattr(module, 'YdMatrix')):
         print("Error: Model does not have YuMatrix or YdMatrix for quark fitting.")
@@ -165,7 +174,12 @@ def main():
 
     # Fit!
     # fit on different points
-    
+    if moduleInfoSwitch:
+        print("==========================================================")
+        print("Model Information:")
+        print(moduleInfo)
+        print("==========================================================")
+
     print("Start fitting...")
 
     fitResults = []

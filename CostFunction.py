@@ -1,6 +1,6 @@
 import numpy as np # for calculation
 from iminuit import Minuit # minimize program
-tauRange=0.0015
+tauRange=0.003
 class CostFunction:
     errordef = Minuit.LEAST_SQUARES
     ## Bound and scale
