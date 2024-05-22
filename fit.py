@@ -188,11 +188,11 @@ def main():
         fit.limits=costFunction.parameterBounds
         fit.strategy=2
 
-        try:
-            fit.migrad(migradN)
-            fitResults.append(np.asarray(fit.values))
-        except:
-            continue
+        # try:
+        fit.migrad(migradN)
+        fitResults.append(np.asarray(fit.values))
+        # except:
+        #     continue
     
     fitResult = min(fitResults, key=lambda x: costFunction(x))
 
