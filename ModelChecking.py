@@ -2,7 +2,7 @@ import numpy as np
 
 def ModelCheckCalculation(NNMatrix, NLMatrix, ELMatrix, param):
     # Replace the last two numbers of param with [0, 1]
-    param[-2:] = [0, 1]
+    param[-2:] = [-0.5, np.sqrt(3)/2]
 
     try:
         # Evaluate the determinant of NNMatrix at param
@@ -23,7 +23,7 @@ def ModelCheckCalculation(NNMatrix, NLMatrix, ELMatrix, param):
 
 def ModelCheck(NNMatrix, NLMatrix, ELMatrix, param):
     result = ModelCheckCalculation(NNMatrix, NLMatrix, ELMatrix, param)
-    return result[0] == 0 and result[1] != 0
+    return result[0] !== 0 and result[1] != 0
 
 def ModelCheckPrint(NNMatrix, NLMatrix, ELMatrix, param):
     result = ModelCheckCalculation(NNMatrix, NLMatrix, ELMatrix, param)
