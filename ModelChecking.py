@@ -23,7 +23,7 @@ def ModelCheckCalculation(NNMatrix, NLMatrix, ELMatrix, param):
 
 def ModelCheck(NNMatrix, NLMatrix, ELMatrix, param):
     result = ModelCheckCalculation(NNMatrix, NLMatrix, ELMatrix, param)
-    return result[0] !== 0 and result[1] != 0
+    return result[0] != 0 and result[1] != 0
 
 def ModelCheckPrint(NNMatrix, NLMatrix, ELMatrix, param):
     result = ModelCheckCalculation(NNMatrix, NLMatrix, ELMatrix, param)
