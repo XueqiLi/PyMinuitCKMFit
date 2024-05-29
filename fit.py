@@ -6,7 +6,7 @@ import argparse
 import os
 
 # Import fixed data
-from ModularForm import *
+# from ModularForm import *
 from ExpData import *
 
 # Import Observable calculation class
