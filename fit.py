@@ -187,7 +187,7 @@ def main():
         fit = Minuit(costFunction, costFunction.InitParams()) 
         fit.limits=costFunction.parameterBounds
         fit.strategy=2
-
+        fit.migrad(migradN)
         try:
             fit.migrad(migradN)
             fitResults.append(np.asarray(fit.values))
@@ -220,7 +220,7 @@ def main():
     print("Number of parameters:")
     print(costFunction.numberOfParams)
     print("==========================================================")
-    costFunction.calResult.Print(ShiftFunction(fitResult))
+    costFunction.calResult.Print(shift(fitResult))
     print("===============----------------------------===============")
     costFunction.Print(fitResult)
     print("===============----------------------------===============")
