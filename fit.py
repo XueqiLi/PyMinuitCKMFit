@@ -187,7 +187,7 @@ def main():
         fit = Minuit(costFunction, costFunction.InitParams()) 
         fit.limits=costFunction.parameterBounds
         fit.strategy=2
-        fit.migrad(migradN)
+        # fit.migrad(migradN)
         try:
             fit.migrad(migradN)
             fitResults.append(np.asarray(fit.values))
