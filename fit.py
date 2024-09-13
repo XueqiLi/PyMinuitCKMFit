@@ -100,8 +100,12 @@ def main():
             DivList=DivList + leptonIODivValList
         if args.cp:
             cpSwitch = True
-            ExpList=ExpList + [LdCPExp]
-            DivList=DivList + [LdCPDiv]
+            if args.NO:
+                ExpList=ExpList + [LdCPExpNO]
+                DivList=DivList + [LdCPDivNO]
+            if args.IO:
+                ExpList=ExpList + [LdCPExpIO]
+                DivList=DivList + [LdCPDivIO]
         else:
             cpSwitch = False
         if not args.NO and not args.IO:

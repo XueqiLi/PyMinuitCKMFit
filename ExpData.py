@@ -45,14 +45,17 @@ leptonNODivValList=[s12NODiv, s23NODiv, s13NODiv, m21Rm31NODiv, mERmMuDiv, mMuRM
 leptonIOExpValList=[s12IOExp, s23IOExp, s13IOExp, m21Rm31IOExp, mERmMuExp, mMuRMTauExp]
 leptonIODivValList=[s12IODiv, s23IODiv, s13IODiv, m21Rm31IODiv, mERmMuDiv, mMuRMTauDiv]
 
-LdCPExp = 1.09 #I assume this is delta CP in radians for leptons, it was  1.09444
-LdCPDiv = 0.23 #I assume this is delta CP in radians for leptons, it was  0.138889
+LdCPExpNO = 1.09 #I assume this is delta CP in radians for leptons, it was  1.09444
+LdCPDivNO = 0.1389 #I assume this is delta CP in radians for leptons, it was  0.138889
 
-leptonCPNOExpValList=leptonNOExpValList+[LdCPExp]
-leptonCPNODivValList=leptonNODivValList+[LdCPDiv]
+LdCPExpIO = 1.589 #I assume this is delta CP in radians for leptons, it was  1.09444
+LdCPDivIO = 0.15 #I assume this is delta CP in radians for leptons, it was  0.138889
 
-leptonCPIOExpValList=leptonIOExpValList+[LdCPExp]
-leptonCPDIOivValList=leptonIODivValList+[LdCPDiv]
+leptonCPNOExpValList=leptonNOExpValList+[LdCPExpNO]
+leptonCPNODivValList=leptonNODivValList+[LdCPDivNO]
+
+leptonCPIOExpValList=leptonIOExpValList+[LdCPExpIO]
+leptonCPDIOivValList=leptonIODivValList+[LdCPDivIO]
 
 # Quark Exp Data evolved to the GUT scale
 # https://arxiv.org/abs/2307.14926
