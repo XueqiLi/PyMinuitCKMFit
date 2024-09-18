@@ -34,6 +34,7 @@ def main():
     parser.add_argument('-scan', type=int, help='number of initial points in the begining')
     parser.add_argument('-itr', type=int, help='number of iteration for scan around the best fit')
     parser.add_argument('-f', dest='filePath', type=str, required=True, help='Path to the model file')
+    parser.add_argument('-debug', dest='debug', action='store_true', help='Output the the error of first fit. It may stop the program.')
     args = parser.parse_args()
 
     ## Set the agruments
@@ -191,7 +192,8 @@ def main():
         fit = Minuit(costFunction, costFunction.InitParams()) 
         fit.limits=costFunction.parameterBounds
         fit.strategy=2
-        # fit.migrad(migradN)
+        if args.debug:
+            fit.migrad(migradN)
         try:
             fit.migrad(migradN)
             fitResults.append(np.asarray(fit.values))
