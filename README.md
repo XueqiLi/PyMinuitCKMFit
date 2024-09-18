@@ -37,4 +37,5 @@ An example to fit both lepton and quark sector with a model of see-saw mechanism
 ```sh
 python3 fit.py -q -l -NO -s -cp -up 2 -low 0.1 -f model/FlavorGW/model1.py
 ```
-
+## Convention 
+In our convention, the massmatrix should be derive as $\psi_i^L M_{ij} \bar{\psi}_j^R$, and the CKM matrix would be the matrix that relate the rand-handed fermion.
