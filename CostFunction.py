@@ -6,7 +6,7 @@ class CostFunction:
     ## Bound and scale
     tBounds = [
         (-0.5,0.5),        # tr
-        (np.sqrt(3)/2, 5)   #ti
+        (np.sqrt(3)/2, 10)   #ti
         # (-0.5,-0.5+ tauRange),        # tr
         # (np.sqrt(3)/2, np.sqrt(3)/2+tauRange)   #ti
         # (-0.1,0.1),        # tr
