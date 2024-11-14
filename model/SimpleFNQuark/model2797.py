@@ -1,4 +1,4 @@
-# Input String: 2797: {{2, 0, 0}, {1, 0, 1}, {2, 0, 1}}
+# Input String: 2797: {{0, 2, 2}, {1, 2, 1}, {0, 2, 1}}
 import numpy as np
 numberOfParams = 36
 eps = 0.17

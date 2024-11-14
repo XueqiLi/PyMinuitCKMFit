@@ -1,4 +1,4 @@
-# Input String: 2798: {{2, 0, 0}, {1, 0, 1}, {2, 0, 2}}
+# Input String: 2798: {{0, 2, 2}, {1, 2, 1}, {1, 0, 0}}
 import numpy as np
 numberOfParams = 36
 eps = 0.17
@@ -8,5 +8,5 @@ def YuMatrix(params):
 
 def YdMatrix(params):
     YD11Re,YD11Im,YD12Re,YD12Im,YD13Re,YD13Im,YD21Re,YD21Im,YD22Re,YD22Im,YD23Re,YD23Im,YD31Re,YD31Im,YD32Re,YD32Im,YD33Re,YD33Im,YU11Re,YU11Im,YU12Re,YU12Im,YU13Re,YU13Im,YU21Re,YU21Im,YU22Re,YU22Im,YU23Re,YU23Im,YU31Re,YU31Im,YU32Re,YU32Im,YU33Re,YU33Im = params
-    return [[(YD11Re+1j*YD11Im),eps**2*(YD12Re+1j*YD12Im),(YD13Re+1j*YD13Im)],[eps**2*(YD21Re+1j*YD21Im),(YD22Re+1j*YD22Im),eps**2*(YD23Re+1j*YD23Im)],[eps**2*(YD31Re+1j*YD31Im),(YD32Re+1j*YD32Im),eps**2*(YD33Re+1j*YD33Im)]]
+    return [[eps*(YD11Re+1j*YD11Im),(YD12Re+1j*YD12Im),(YD13Re+1j*YD13Im)],[eps*(YD21Re+1j*YD21Im),eps**2*(YD22Re+1j*YD22Im),eps**2*(YD23Re+1j*YD23Im)],[eps*(YD31Re+1j*YD31Im),eps**2*(YD32Re+1j*YD32Im),eps**2*(YD33Re+1j*YD33Im)]]
 
