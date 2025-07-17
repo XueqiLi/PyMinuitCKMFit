@@ -1,6 +1,9 @@
 # PyMinuitCKMFit
 A Simple Script for Fitting Flavor Observables Using [iMinuit](https://iminuit.readthedocs.io/en/stable/).
 
+## Dependence
+Please install `numpy`, `iminuit` to use it. If you need modular forms, you also need to install `mpmath`
+
 ## Useage
 |Argument|Meaning|
 |--------|-------|

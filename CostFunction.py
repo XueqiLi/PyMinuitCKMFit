@@ -6,7 +6,7 @@ class CostFunction:
     ## Bound and scale
     tBounds = [
         (-0.5,0.5),        # tr
-        (np.sqrt(3)/2, 10)   #ti
+        (np.sqrt(3)/2, 13)   #ti
         # (-0.5,-0.5+ tauRange),        # tr
         # (np.sqrt(3)/2, np.sqrt(3)/2+tauRange)   #ti
         # (-0.1,0.1),        # tr
@@ -58,8 +58,12 @@ class CostFunction:
         chiSqr=self.__call__(params)
         sigmaAway=self.SigmaAway(params)
         observableName=self.calResult.observableName
+
+        shift_values = self.shiftFunction(params)
+        formatted_shift_values = [f"{val:.6f}" for val in shift_values]
+
         print("Fit Result:")
-        print(self.shiftFunction(params))
+        print(*formatted_shift_values)
         print("----------------------------------------------------------")
         print("Sigma Away:")
         for i in range(len(self.expList)):
